@@ -2,7 +2,7 @@
 PYTHON := python3
 PYTHONPATH := `pwd`
 
-#* Poetry
+#* Poetry: the dependency management and packaging tool for Python
 .PHONY: poetry-download
 poetry-download:
 	curl -sSL https://install.python-poetry.org/ | $(PYTHON) -
@@ -17,6 +17,7 @@ install:
 	poetry export --without-hashes > requirements.txt
 	poetry install -n
 
+#* Installation of pre-commit: tool of Git hook scripts
 .PHONY: pre-commit-install
 pre-commit-install:
 	poetry run pre-commit install
