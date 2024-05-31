@@ -10,7 +10,7 @@ Control Oriented BR2 Actuation Model for a BR2 slender soft arm. The package ext
 
 The detail implementation of the following `make` commands are in the `Makefile`.
 
-In this project, the Python tool `poetry` is used for dependency management and packaging. To install `poetry` run the following command:
+In this project, a Python tool `poetry` is used for dependency management and packaging. To install `poetry` run the following command:
 
 ```sh
 # https://python-poetry.org/docs/#installing-with-the-official-installer
