@@ -6,7 +6,7 @@ build-backend = "poetry.core.masonry.api"
 [tool.poetry]
 name = "cobr2"
 version = "0.1.0"
-description = "Control oriented BR2 model"
+description = "Control oriented BR2 actuation model"
 readme = "README.md"
 authors = []
 license = "MIT"
