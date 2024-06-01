@@ -10,6 +10,8 @@ Control Oriented BR2 Actuation Model for a BR2 slender soft arm. The package ext
 
 The detail implementation of the following `make` commands are in the `Makefile`.
 
+### Dependency management, installation & packaging
+
 In this project, a Python tool `poetry` is used for dependency management and packaging. To install `poetry` run the following command:
 
 ```sh
@@ -32,6 +34,30 @@ To install Git hook scripts tool to identify simple issues before submission to 
 ```sh
 # https://pre-commit.com/#install
 make pre-commit-install
+```
+
+###  Unittests
+
+In this project, a Python framework `pytest` is used for unit testing. To run the unit tests, run the following command:
+
+```sh
+# https://docs.pytest.org/en/8.2.x/index.html
+make test
+```
+
+### Code formatting
+
+```sh
+make formatting
+```
+
+### Check type-hinting
+
+A static type checker for Python, `mypy`, is used to checks standard Python programs.
+
+```sh
+# https://mypy-lang.org/
+make mypy
 ```
 
 ## Related Works

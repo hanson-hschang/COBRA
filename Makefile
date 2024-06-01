@@ -22,6 +22,16 @@ install:
 pre-commit-install:
 	poetry run pre-commit install
 
+#* Unittests
+.PHONY: test
+test:
+	poetry run pytest -c pyproject.toml --cov=src/cobr2
+
+.PHONY: test_ci
+test_ci:
+	poetry run pytest -c pyproject.toml --cov=src/cobr2 --cov-report=xml
+
+
 #* Formatters
 .PHONY: codestyle
 codestyle:
@@ -32,24 +42,17 @@ codestyle:
 .PHONY: formatting
 formatting: codestyle
 
-#* Linting
-.PHONY: test
-test:
-	poetry run pytest -c pyproject.toml --cov=src/cobr2
-
-.PHONY: test_ci
-test_ci:
-	poetry run pytest -c pyproject.toml --cov=src/cobr2 --cov-report=xml
-
 .PHONY: check-codestyle
 check-codestyle:
 	poetry run isort --diff --check-only --settings-path pyproject.toml ./
 	poetry run black --diff --check --config pyproject.toml ./
 
+#* Check type-hinting
 .PHONY: mypy
 mypy:
 	poetry run mypy --config-file pyproject.toml src/cobr2
 
+#* Linting
 .PHONY: lint
 lint: test check-codestyle mypy check-safety
 
