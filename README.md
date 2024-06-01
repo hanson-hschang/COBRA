@@ -38,14 +38,15 @@ make pre-commit-install
 
 ###  Unittests
 
-In this project, a Python framework `pytest` is used for unit testing. To run the unit tests, run the following command:
+In this project, a Python framework [`pytest`](https://docs.pytest.org/en/8.2.x/index.html) is used for unit testing. To run the unit tests, run the following command:
 
 ```sh
-# https://docs.pytest.org/en/8.2.x/index.html
 make test
 ```
 
 ### Code formatting
+
+This project uses [`isort`](https://pycqa.github.io/isort/) to sort and organize imported packages, and [`black`](https://black.readthedocs.io/en/stable/) to enforce a consistent code style across the Python codebase. To format the codebase, run the following command:
 
 ```sh
 make formatting
@@ -53,10 +54,9 @@ make formatting
 
 ### Check type-hinting
 
-A static type checker for Python, `mypy`, is used to checks standard Python programs.
+A static type checker for Python, [`mypy`](https://mypy-lang.org/), is used to checks standard Python programs.
 
 ```sh
-# https://mypy-lang.org/
 make mypy
 ```
 
