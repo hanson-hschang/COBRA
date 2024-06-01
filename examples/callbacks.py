@@ -3,13 +3,12 @@ Created on Jun 01, 2024
 @author: Heng-Sheng (Hanson) Chang
 """
 
-from elastica import CosseratRod
-from elastica.callback_functions import CallBackBaseClass
+import elastica as ea
 
 
-class BasicCallBackBaseClass(CallBackBaseClass):
+class BasicCallBackBaseClass(ea.CallBackBaseClass):
     def __init__(self, step_skip: int, callback_params: dict):
-        CallBackBaseClass.__init__(self)
+        ea.CallBackBaseClass.__init__(self)
         self.every = step_skip
         self.callback_params = callback_params
 
@@ -27,7 +26,7 @@ class RodCallBack(BasicCallBackBaseClass):
     def __init__(self, step_skip: int, callback_params: dict):
         BasicCallBackBaseClass.__init__(self, step_skip, callback_params)
 
-    def save_params(self, system: CosseratRod, time: float):
+    def save_params(self, system: ea.CosseratRod, time: float):
         self.callback_params["time"].append(time)
         self.callback_params["radius"].append(system.radius.copy())
         self.callback_params["dilatation"].append(system.dilatation.copy())
