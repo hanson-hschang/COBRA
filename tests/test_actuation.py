@@ -9,8 +9,8 @@ def test_actuation_shape():
 
     assert actuation.internal_force.shape == (n_dim, n_elements)
     assert actuation.internal_couple.shape == (n_dim, n_elements - 1)
-    assert actuation.external_force.shape == (n_dim, n_elements + 1)
-    assert actuation.external_couple.shape == (n_dim, n_elements)
+    assert actuation.equivalent_external_force.shape == (n_dim, n_elements + 1)
+    assert actuation.equivalent_external_couple.shape == (n_dim, n_elements)
 
 
 def test_actuation_reset():
@@ -20,12 +20,12 @@ def test_actuation_reset():
 
     actuation.internal_force[0, :] = 1
     actuation.internal_couple[0, :] = 1
-    actuation.external_force[0, :] = 1
-    actuation.external_couple[0, :] = 1
+    actuation.equivalent_external_force[0, :] = 1
+    actuation.equivalent_external_couple[0, :] = 1
 
     actuation.reset_actuation()
 
     assert (actuation.internal_force == 0).all()
     assert (actuation.internal_couple == 0).all()
-    assert (actuation.external_force == 0).all()
-    assert (actuation.external_couple == 0).all()
+    assert (actuation.equivalent_external_force == 0).all()
+    assert (actuation.equivalent_external_couple == 0).all()

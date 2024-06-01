@@ -17,14 +17,18 @@ class ContinuousActuation:
             (n_dim, n_elements - 1)
         )  # material frame
 
-        self.external_force = np.zeros((n_dim, n_elements + 1))  # lab frame
-        self.external_couple = np.zeros((n_dim, n_elements))  # material frame
+        self.equivalent_external_force = np.zeros(
+            (n_dim, n_elements + 1)
+        )  # lab frame
+        self.equivalent_external_couple = np.zeros(
+            (n_dim, n_elements)
+        )  # material frame
 
     def reset_actuation(
         self,
-    ):
+    ) -> None:
         # Reset actuation forces / couples to be zero.
         self.internal_force[:, :] *= 0
         self.internal_couple[:, :] *= 0
-        self.external_force[:, :] *= 0
-        self.external_couple[:, :] *= 0
+        self.equivalent_external_force[:, :] *= 0
+        self.equivalent_external_couple[:, :] *= 0
