@@ -2,6 +2,8 @@ import numpy as np
 from elastica import CosseratRod
 
 from cobr2.actuations.actuation_tool import (
+    average2D,
+    force_induced_couple,
     internal_load_to_equivalent_external_load,
     lab_to_material,
     material_to_lab,
@@ -71,3 +73,19 @@ class TestActuationTool:
             self.n_elements + 1,
         )
         assert equivalent_external_couple.shape == (self.n_dim, self.n_elements)
+
+    def test_average2D(self):
+        vector_collection = np.random.rand(self.n_dim, self.n_elements)
+
+        result = average2D(vector_collection)
+
+        assert result.shape == (self.n_dim, self.n_elements - 1)
+
+    def test_force_induced_couple(self):
+        force = np.random.rand(self.n_dim, self.n_elements)
+        distance = np.random.rand(self.n_dim, self.n_elements)
+        couple = np.zeros((self.n_dim, self.n_elements - 1))
+
+        force_induced_couple(force, distance, couple)
+
+        assert couple.shape == (self.n_dim, self.n_elements - 1)

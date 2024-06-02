@@ -52,3 +52,20 @@ def internal_load_to_equivalent_external_load(
         )
         * rest_lengths
     )
+
+
+@njit(cache=True)
+def average2D(vector_collection):
+    blocksize = vector_collection.shape[1] - 1
+    output_vector = np.zeros((3, blocksize))
+    for n in range(blocksize):
+        for i in range(3):
+            output_vector[i, n] = (
+                vector_collection[i, n] + vector_collection[i, n + 1]
+            ) / 2
+    return output_vector
+
+
+@njit(cache=True)
+def force_induced_couple(force, distance, couple):
+    couple[:, :] = average2D(_batch_cross(distance, force))
