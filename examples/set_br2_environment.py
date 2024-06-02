@@ -126,7 +126,7 @@ class BR2Environment(BaseEnvironment):
 
         # Setup boundary conditions
         self.simulator.constrain(self.rod).using(
-            ea.OneEndFixedRod,
+            ea.OneEndFixedBC,
             constrained_position_idx=(0,),
             constrained_director_idx=(0,),
         )
