@@ -30,7 +30,7 @@ class ContinuousActuation:
             (n_dim, n_elements)
         )  # material frame
 
-    def reset_actuation(
+    def reset(
         self,
     ) -> None:
         # Reset actuation forces / couples to be zero.
@@ -40,6 +40,7 @@ class ContinuousActuation:
         self.equivalent_external_couple[:, :] *= 0
 
     def __call__(self, system: CosseratRod) -> None:
+        # Calculate equivalent external forces / couples from internal forces / couples.
         internal_load_to_equivalent_external_load(
             system.director_collection,
             system.kappa,
@@ -53,3 +54,25 @@ class ContinuousActuation:
             self.equivalent_external_force,
             self.equivalent_external_couple,
         )
+
+
+class ApplyActuations(NoForces):
+    """
+    This class is used to apply actuations, including forces and couples, to the rod.
+    """
+
+    def __init__(self, actuations: list[ContinuousActuation]):
+        super().__init__()
+        self.current_step = 0
+        self.actuations = actuations
+
+    def apply_forces(self, system: CosseratRod, time: np.float64 = 0.0):
+        for actuation in self.actuations:
+            actuation.reset()
+            actuation(system)
+            inplace_addition(
+                system.external_forces, actuation.equivalent_external_force
+            )
+            inplace_addition(
+                system.external_torques, actuation.equivalent_external_couple
+            )

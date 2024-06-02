@@ -45,7 +45,7 @@ class TestActuation:
         self.actuation.equivalent_external_force[0, :] = 1
         self.actuation.equivalent_external_couple[0, :] = 1
 
-        self.actuation.reset_actuation()
+        self.actuation.reset()
 
         assert (self.actuation.internal_force == 0).all()
         assert (self.actuation.internal_couple == 0).all()
