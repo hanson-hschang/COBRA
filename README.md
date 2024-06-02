@@ -60,9 +60,18 @@ make formatting
 ### Check type-hinting
 
 A static type checker for Python, [`mypy`](https://mypy-lang.org/), is used to check standard Python programs.
+To check type hinting, run the following command:
 
 ```sh
 make mypy
+```
+
+### Install the cobr2 as an editable package
+
+To use the `cobr2` as an package, run the following command:
+
+```sh
+pip install -e .
 ```
 
 ## Related Works
