@@ -28,7 +28,7 @@ class TestActuationTool:
 
     # TODO: the following tests only test the shape of the output, not the correctness of the output
 
-    def test_lab_to_material(self):
+    def test_lab_to_material(self) -> None:
         director_collection = np.random.rand(
             self.n_dim, self.n_dim, self.n_elements
         )
@@ -38,7 +38,7 @@ class TestActuationTool:
 
         assert result.shape == (self.n_dim, self.n_elements)
 
-    def test_material_to_lab(self):
+    def test_material_to_lab(self) -> None:
         director_collection = np.random.rand(
             self.n_dim, self.n_dim, self.n_elements
         )
@@ -48,7 +48,7 @@ class TestActuationTool:
 
         assert result.shape == (self.n_dim, self.n_elements)
 
-    def test_internal_load_to_equivalent_external_load(self):
+    def test_internal_load_to_equivalent_external_load(self) -> None:
         internal_force = np.random.rand(self.n_dim, self.n_elements)
         internal_couple = np.random.rand(self.n_dim, self.n_elements - 1)
         equivalent_external_force = np.zeros((self.n_dim, self.n_elements + 1))
@@ -74,14 +74,14 @@ class TestActuationTool:
         )
         assert equivalent_external_couple.shape == (self.n_dim, self.n_elements)
 
-    def test_average2D(self):
+    def test_average2D(self) -> None:
         vector_collection = np.random.rand(self.n_dim, self.n_elements)
 
         result = average2D(vector_collection)
 
         assert result.shape == (self.n_dim, self.n_elements - 1)
 
-    def test_force_induced_couple(self):
+    def test_force_induced_couple(self) -> None:
         distance = np.random.rand(self.n_dim, self.n_elements)
         force = np.random.rand(self.n_dim, self.n_elements)
 
