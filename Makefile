@@ -23,8 +23,8 @@ pre-commit-install:
 	poetry run pre-commit install
 
 #* Unittests
-.PHONY: test
-test:
+.PHONY: pytest
+pytest:
 	poetry run pytest -c pyproject.toml --cov=src/cobr2
 
 .PHONY: test_ci

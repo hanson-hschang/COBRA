@@ -45,7 +45,7 @@ In this project, a Python framework [`pytest`](https://docs.pytest.org/en/8.2.x/
 To run unit tests, run the following command:
 
 ```sh
-make test
+make pytest
 ```
 
 ### Code formatting
