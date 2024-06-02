@@ -1,8 +1,8 @@
+import elastica as ea
 import numpy as np
-from elastica.external_forces import NoForces, inplace_addition
-from elastica.rod.cosserat_rod import CosseratRod
 
 from cobr2.actuations.actuation_tool import (
+    apply_load,
     internal_load_to_equivalent_external_load,
 )
 
@@ -39,7 +39,7 @@ class ContinuousActuation:
         self.equivalent_external_force[:, :] *= 0
         self.equivalent_external_couple[:, :] *= 0
 
-    def __call__(self, system: CosseratRod) -> None:
+    def __call__(self, system: ea.CosseratRod) -> None:
         # Calculate equivalent external forces / couples from internal forces / couples.
         internal_load_to_equivalent_external_load(
             system.director_collection,
@@ -56,7 +56,7 @@ class ContinuousActuation:
         )
 
 
-class ApplyActuations(NoForces):
+class ApplyActuations(ea.NoForces):  # type: ignore
     """
     This class is used to apply actuations, including forces and couples, to the rod.
     """
@@ -65,13 +65,13 @@ class ApplyActuations(NoForces):
         super().__init__()
         self.actuations = actuations
 
-    def apply_forces(self, system: CosseratRod, time: float = 0.0) -> None:
+    def apply_forces(self, system: ea.CosseratRod, time: float = 0.0) -> None:
         for actuation in self.actuations:
             actuation.reset()
             actuation(system)
-            inplace_addition(
+            apply_load(
                 system.external_forces, actuation.equivalent_external_force
             )
-            inplace_addition(
+            apply_load(
                 system.external_torques, actuation.equivalent_external_couple
             )

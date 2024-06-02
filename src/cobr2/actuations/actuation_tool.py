@@ -78,3 +78,11 @@ def force_induced_couple(
 ) -> np.ndarray:
     couple: np.ndarray = average2D(_batch_cross(distance, force))
     return couple
+
+
+@njit(cache=True)  # type: ignore
+def apply_load(
+    system_load: np.ndarray,
+    external_load: np.ndarray,
+) -> None:
+    system_load[:, :] += external_load
