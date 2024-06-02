@@ -68,6 +68,7 @@ def average2D(vector_collection: np.ndarray) -> np.ndarray:
 
 @njit(cache=True)
 def force_induced_couple(
-    force: np.ndarray, distance: np.ndarray, couple: np.ndarray
+    force: np.ndarray,
+    distance: np.ndarray,
 ) -> None:
-    couple[:, :] = average2D(_batch_cross(distance, force))
+    return average2D(_batch_cross(distance, force))
