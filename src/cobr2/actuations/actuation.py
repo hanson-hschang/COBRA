@@ -63,7 +63,6 @@ class ApplyActuations(NoForces):
 
     def __init__(self, actuations: list[ContinuousActuation]):
         super().__init__()
-        self.current_step = 0
         self.actuations = actuations
 
     def apply_forces(self, system: CosseratRod, time: np.float64 = 0.0):
