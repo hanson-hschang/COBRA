@@ -1,4 +1,10 @@
 import numpy as np
+from elastica.external_forces import NoForces, inplace_addition
+from elastica.rod.cosserat_rod import CosseratRod
+
+from cobr2.actuations.actuation_tool import (
+    internal_load_to_equivalent_external_load,
+)
 
 
 class ContinuousActuation:
@@ -32,3 +38,18 @@ class ContinuousActuation:
         self.internal_couple[:, :] *= 0
         self.equivalent_external_force[:, :] *= 0
         self.equivalent_external_couple[:, :] *= 0
+
+    def __call__(self, system: CosseratRod) -> None:
+        internal_load_to_equivalent_external_load(
+            system.director_collection,
+            system.kappa,
+            system.tangents,
+            system.rest_lengths,
+            system.rest_voronoi_lengths,
+            system.dilatation,
+            system.voronoi_dilatation,
+            self.internal_force,
+            self.internal_couple,
+            self.equivalent_external_force,
+            self.equivalent_external_couple,
+        )
