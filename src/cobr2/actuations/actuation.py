@@ -65,7 +65,7 @@ class ApplyActuations(NoForces):
         super().__init__()
         self.actuations = actuations
 
-    def apply_forces(self, system: CosseratRod, time: np.float64 = 0.0):
+    def apply_forces(self, system: CosseratRod, time: float = 0.0) -> None:
         for actuation in self.actuations:
             actuation.reset()
             actuation(system)
