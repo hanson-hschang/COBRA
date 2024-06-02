@@ -3,15 +3,20 @@ from elastica._calculus import difference_kernel, quadrature_kernel
 from elastica._linalg import _batch_cross, _batch_matvec
 from numba import njit
 
+# adding njit decorator strips away function type annotations, breaking mypy's analysis
+# adding # type: ignore to the function signature suppresses the error
+# link to numba issue: https://github.com/numba/numba/issues/7424
 
-@njit(cache=True)
+
+@njit(cache=True)  # type: ignore
 def lab_to_material(
     directors: np.ndarray, lab_vectors: np.ndarray
 ) -> np.ndarray:
-    return _batch_matvec(directors, lab_vectors)
+    material_vectors: np.ndarray = _batch_matvec(directors, lab_vectors)
+    return material_vectors
 
 
-@njit(cache=True)
+@njit(cache=True)  # type: ignore
 def material_to_lab(
     directors: np.ndarray, material_vectors: np.ndarray
 ) -> np.ndarray:
@@ -24,7 +29,7 @@ def material_to_lab(
     return lab_vectors
 
 
-@njit(cache=True)
+@njit(cache=True)  # type: ignore
 def internal_load_to_equivalent_external_load(
     director_collection: np.ndarray,
     kappa: np.ndarray,
@@ -54,7 +59,7 @@ def internal_load_to_equivalent_external_load(
     )
 
 
-@njit(cache=True)
+@njit(cache=True)  # type: ignore
 def average2D(vector_collection: np.ndarray) -> np.ndarray:
     blocksize = vector_collection.shape[1] - 1
     output_vector = np.zeros((3, blocksize))
@@ -66,9 +71,10 @@ def average2D(vector_collection: np.ndarray) -> np.ndarray:
     return output_vector
 
 
-@njit(cache=True)
+@njit(cache=True)  # type: ignore
 def force_induced_couple(
     distance: np.ndarray,
     force: np.ndarray,
 ) -> np.ndarray:
-    return average2D(_batch_cross(distance, force))
+    couple: np.ndarray = average2D(_batch_cross(distance, force))
+    return couple
