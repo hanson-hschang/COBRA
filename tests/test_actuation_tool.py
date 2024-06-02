@@ -82,12 +82,12 @@ class TestActuationTool:
         assert result.shape == (self.n_dim, self.n_elements - 1)
 
     def test_force_induced_couple(self):
-        force = np.random.rand(self.n_dim, self.n_elements)
         distance = np.random.rand(self.n_dim, self.n_elements)
+        force = np.random.rand(self.n_dim, self.n_elements)
 
         couple = force_induced_couple(
-            force,
             distance,
+            force,
         )
 
         assert couple.shape == (self.n_dim, self.n_elements - 1)
