@@ -1,3 +1,5 @@
+from typing import Iterable
+
 import elastica as ea
 import numpy as np
 
@@ -61,7 +63,7 @@ class ApplyActuations(ea.NoForces):
     This class is used to apply actuations, including forces and couples, to the rod.
     """
 
-    def __init__(self, actuations: list[ContinuousActuation]):
+    def __init__(self, actuations: Iterable[ContinuousActuation]):
         super().__init__()
         self.actuations = actuations
 
