@@ -20,7 +20,8 @@ def compute_local_shear(
     kappa: np.ndarray,
     delta_s: np.ndarray,
 ) -> np.ndarray:
-    return shear + quadrature_kernel(
+    local_shear: np.ndarray = shear + quadrature_kernel(
         _batch_cross(kappa, _average(local_position))
         + _difference(local_position) / delta_s
     )
+    return local_shear
