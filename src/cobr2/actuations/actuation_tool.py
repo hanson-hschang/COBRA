@@ -3,6 +3,8 @@ from elastica._calculus import difference_kernel, quadrature_kernel
 from elastica._linalg import _batch_cross, _batch_matvec
 from numba import njit
 
+from cobr2._calculus import average2D
+
 # adding njit decorator strips away function type annotations, breaking mypy's analysis
 # adding # type: ignore to the function signature suppresses the error
 # link to numba issue: https://github.com/numba/numba/issues/7424
@@ -57,18 +59,6 @@ def internal_load_to_equivalent_external_load(
         )
         * rest_lengths
     )
-
-
-@njit(cache=True)  # type: ignore
-def average2D(vector_collection: np.ndarray) -> np.ndarray:
-    blocksize = vector_collection.shape[1] - 1
-    output_vector = np.zeros((3, blocksize))
-    for n in range(blocksize):
-        for i in range(3):
-            output_vector[i, n] = (
-                vector_collection[i, n] + vector_collection[i, n + 1]
-            ) / 2
-    return output_vector
 
 
 @njit(cache=True)  # type: ignore
