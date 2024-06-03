@@ -3,10 +3,12 @@ from numba import njit
 
 
 @njit(cache=True)  # type: ignore
-def difference2D(vector_collection: np.ndarray) -> np.ndarray:
-    return vector_collection[:, 1:] - vector_collection[:, :-1]
+def average2D(vector: np.ndarray) -> np.ndarray:
+    return 0.5 * (vector[:, :-1] + vector[:, 1:])
 
 
 @njit(cache=True)  # type: ignore
-def average2D(vector_collection: np.ndarray) -> np.ndarray:
-    return (vector_collection[:, 1:] + vector_collection[:, :-1]) / 2
+def pointwise_multiplication(
+    vector_a: np.ndarray, vector_b: np.ndarray
+) -> np.ndarray:
+    return vector_a * vector_b
