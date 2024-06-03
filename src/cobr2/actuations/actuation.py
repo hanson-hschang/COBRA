@@ -56,7 +56,7 @@ class ContinuousActuation:
         )
 
 
-class ApplyActuations(ea.NoForces):  # type: ignore
+class ApplyActuations(ea.NoForces):
     """
     This class is used to apply actuations, including forces and couples, to the rod.
     """
