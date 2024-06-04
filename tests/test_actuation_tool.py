@@ -83,7 +83,7 @@ class TestActuationTool:
             force,
         )
 
-        assert couple.shape == (self.n_dim, self.n_elements - 1)
+        assert couple.shape == (self.n_dim, self.n_elements)
 
     def test_apply_load(self) -> None:
         system_load = np.zeros((self.n_dim, self.n_elements))

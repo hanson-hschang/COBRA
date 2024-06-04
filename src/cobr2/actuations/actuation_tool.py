@@ -3,8 +3,6 @@ from elastica._calculus import difference_kernel, quadrature_kernel
 from elastica._linalg import _batch_cross, _batch_matvec
 from numba import njit
 
-from cobr2.math_tool import average2D as _average
-
 # adding njit decorator strips away function type annotations, breaking mypy's analysis
 # adding # type: ignore to the function signature suppresses the error
 # link to numba issue: https://github.com/numba/numba/issues/7424
@@ -66,7 +64,7 @@ def force_induced_couple(
     distance: np.ndarray,
     force: np.ndarray,
 ) -> np.ndarray:
-    couple: np.ndarray = _average(_batch_cross(distance, force))
+    couple: np.ndarray = _batch_cross(distance, force)
     return couple
 
 
