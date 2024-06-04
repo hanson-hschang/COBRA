@@ -1,10 +1,10 @@
 <div align=center>
-  <h1>Control Oriented BR2 Actuation Model (COBR2)</h1>
+  <h1>COBR2 - Control Oriented BR2 Actuation Model</h1>
 </div>
 
 ## Project Description
 
-Control Oriented BR2 Actuation Model for a BR2 slender soft arm.
+Control Oriented Actuation Model for a BR2 slender soft arm.
 The package extend the implementation of Cosserat Rod simulation done by [PyElastica](https://github.com/GazzolaLab/PyElastica).
 
 ## How setup development environment

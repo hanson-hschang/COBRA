@@ -14,14 +14,14 @@ keywords = ["BR2 model"]
 
 # Pypi classifiers: https://pypi.org/classifiers/
 classifiers = [
-  "Development Status :: 4 - Beta",
-  "Intended Audience :: Science/Research",
-  "Intended Audience :: Education",
-  "Operating System :: OS Independent",
-  "License :: OSI Approved :: MIT License",
-  "Programming Language :: Python :: 3",
-  "Programming Language :: Python :: 3.10",
-  "Programming Language :: Python :: 3.11",
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: Education",
+    "Operating System :: OS Independent",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
 ]
 
 # ...
@@ -31,6 +31,7 @@ packages = [
 
 [tool.poetry.dependencies]
 python = ">=3.10,<3.12"
+pyelastica = "^0.3.2"
 pytest = "^8.2.1"
 pytest-mock = "^3.14.0"
 codecov = "^2.1.13"
@@ -41,7 +42,10 @@ isort = {extras = ["colors"], version = "^5.13.2"}
 mypy = "^1.10.0"
 mypy-extensions = "^1.0.0"
 pyupgrade = "^3.15.2"
-pyelastica = "^0.3.2"
+sphinx = "^7.3.7"
+sphinx-rtd-theme = "^2.0.0"
+numpydoc = "^1.7.0"
+sphinx-autodoc-typehints = "^2.1.0"
 
 [tool.black]
 # https://github.com/psf/black
@@ -114,10 +118,10 @@ doctest_optionflags = ["NUMBER", "NORMALIZE_WHITESPACE", "IGNORE_EXCEPTION_DETAI
 
 # Extra options:
 addopts = [
-  "--strict-markers",
-  "--tb=short",
-#  "--doctest-modules", TODO: Try to include pytest.doctest
-#  "--doctest-continue-on-failure",
+    "--strict-markers",
+    "--tb=short",
+    # "--doctest-modules", TODO: Try to include pytest.doctest
+    # "--doctest-continue-on-failure",
 ]
 
 [tool.coverage.report]
