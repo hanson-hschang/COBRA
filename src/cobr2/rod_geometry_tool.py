@@ -3,7 +3,7 @@ from elastica._calculus import _difference, difference_kernel, quadrature_kernel
 from elastica._linalg import _batch_cross, _batch_matvec
 from numba import njit
 
-from cobr2._calculus import average2D as _average
+from cobr2.math_tool import average2D as _average
 
 
 @njit(cache=True)  # type: ignore
@@ -25,3 +25,14 @@ def compute_local_shear(
         + _difference(local_position) / delta_s
     )
     return local_shear
+
+
+@njit(cache=True)  # type: ignore
+def compute_local_tangent(local_shear: np.ndarray) -> np.ndarray:
+    blocksize = local_shear.shape[1]
+    local_tangent = np.empty((3, blocksize))
+    for i in range(blocksize):
+        local_tangent[:, i] = local_shear[:, i] / np.sqrt(
+            np.dot(local_shear[:, i], local_shear[:, i])
+        )
+    return local_tangent

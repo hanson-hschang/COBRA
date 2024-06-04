@@ -3,7 +3,7 @@ from elastica._calculus import difference_kernel, quadrature_kernel
 from elastica._linalg import _batch_cross, _batch_matvec
 from numba import njit
 
-from cobr2._calculus import average2D as _average
+from cobr2.math_tool import average2D as _average
 
 # adding njit decorator strips away function type annotations, breaking mypy's analysis
 # adding # type: ignore to the function signature suppresses the error
