@@ -33,6 +33,8 @@ def compute_local_tangent(local_shear: np.ndarray) -> np.ndarray:
     local_tangent = np.empty((3, blocksize))
     for i in range(blocksize):
         local_tangent[:, i] = local_shear[:, i] / np.sqrt(
-            np.dot(local_shear[:, i], local_shear[:, i])
+            (local_shear[0, i]) ** 2
+            + (local_shear[1, i]) ** 2
+            + (local_shear[2, i]) ** 2
         )
     return local_tangent
