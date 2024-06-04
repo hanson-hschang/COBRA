@@ -10,6 +10,8 @@ import numpy as np
 from callbacks import RodCallBack
 from tqdm import tqdm
 
+from cobr2.actuations.FREE import ApplyFREEs, BaseFREE, PressureCoefficients
+
 
 class BaseSimulator(
     ea.BaseSystemCollection,
@@ -137,10 +139,44 @@ class BR2Environment(BaseEnvironment):
             ea.GravityForces, acc_gravity=acc_gravity
         )
 
-        # TODO: Setup the BR2 arm presure actuation model
+        # Setup the BR2 arm presure actuation model
+        # TODO: set the right position and pressure coefficients for the BR2 actuations
+        self.bending_actuation = BaseFREE(
+            position=np.zeros((3, n_elements)),
+            pressure_coefficients=PressureCoefficients(
+                force=np.array([0.0, 0.0, 0.0]),
+                couple=np.array([0.0, 0.0, 0.0]),
+            ),
+        )
+        self.rotation_CW_actuation = BaseFREE(
+            position=np.zeros((3, n_elements)),
+            pressure_coefficients=PressureCoefficients(
+                force=np.array([0.0, 0.0, 0.0]),
+                couple=np.array([0.0, 0.0, 0.0]),
+            ),
+        )
+        self.rotation_CCW_actuation = BaseFREE(
+            position=np.zeros((3, n_elements)),
+            pressure_coefficients=PressureCoefficients(
+                force=np.array([0.0, 0.0, 0.0]),
+                couple=np.array([0.0, 0.0, 0.0]),
+            ),
+        )
+        self.simulator.add_forcing_to(self.rod).using(
+            ApplyFREEs,
+            actuator_FREEs=[
+                self.bending_actuation,
+                self.rotation_CW_actuation,
+                self.rotation_CCW_actuation,
+            ],
+        )
 
     def step(self, time: float, pressures: np.ndarray = np.zeros(3)):
-        # TODO: Apply pressures to the BR2 arm
+        # Apply pressures to the BR2 arm
+        self.bending_actuation.pressure = pressures[0]
+        self.rotation_CW_actuation.pressure = pressures[1]
+        self.rotation_CCW_actuation.pressure = pressures[2]
+
         return super().step(time)
 
 
