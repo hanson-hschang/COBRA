@@ -1,7 +1,7 @@
 import numpy as np
 from elastica import CosseratRod
 
-from cobr2.actuations.actuation_tool import (
+from cobra.actuations.actuation_tool import (
     apply_load,
     force_induced_couple,
     internal_load_to_equivalent_external_load,

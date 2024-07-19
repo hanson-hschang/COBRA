@@ -3,7 +3,7 @@ from typing import Iterable
 import elastica as ea
 import numpy as np
 
-from cobr2.actuations.actuation_tool import (
+from cobra.actuations.actuation_tool import (
     apply_load,
     internal_load_to_equivalent_external_load,
 )

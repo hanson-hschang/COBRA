@@ -1,7 +1,7 @@
 import numpy as np
 from elastica import CosseratRod
 
-from cobr2.actuations.actuation import ContinuousActuation
+from cobra.actuations.actuation import ContinuousActuation
 
 
 class TestActuation:

@@ -4,13 +4,13 @@ requires = ["poetry_core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
-name = "cobr2"
+name = "cobra"
 version = "0.1.0"
-description = "Control oriented BR2 actuation model"
+description = "Control oriented Bending and Rotational actuation model"
 readme = "README.md"
 authors = []
 license = "MIT"
-keywords = ["BR2 model"]
+keywords = ["Soft Robotics Dynamic Model"]
 
 # Pypi classifiers: https://pypi.org/classifiers/
 classifiers = [
@@ -26,7 +26,7 @@ classifiers = [
 
 # ...
 packages = [
-    { include = "cobr2", from = "src" },
+    { include = "cobra", from = "src" },
 ]
 
 [tool.poetry.dependencies]

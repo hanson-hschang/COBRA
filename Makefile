@@ -25,7 +25,7 @@ pre-commit-install:
 #* Unittests
 .PHONY: pytest
 pytest:
-	poetry run pytest -c pyproject.toml --cov=src/cobr2
+	poetry run pytest -c pyproject.toml --cov=src/cobra
 
 #* Formatters
 .PHONY: codestyle
@@ -40,12 +40,12 @@ formatting: codestyle
 #* Check type-hinting
 .PHONY: mypy
 mypy:
-	poetry run mypy --config-file pyproject.toml src/cobr2
+	poetry run mypy --config-file pyproject.toml src/cobra
 
 #* Linting
 .PHONY: test_ci
 test_ci:
-	poetry run pytest -c pyproject.toml --cov=src/cobr2 --cov-report=xml
+	poetry run pytest -c pyproject.toml --cov=src/cobra --cov-report=xml
 
 .PHONY: check-codestyle
 check-codestyle:

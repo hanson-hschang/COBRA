@@ -1,6 +1,6 @@
 import numpy as np
 
-from cobr2.math_tool import average2D, pointwise_multiplication
+from cobra.math_tool import average2D, pointwise_multiplication
 
 
 class TestMathTool:

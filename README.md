@@ -66,9 +66,9 @@ To check type hinting, run the following command:
 make mypy
 ```
 
-### Install the cobr2 as an editable package
+### Install the cobra as an editable package
 
-To use the `cobr2` as an package, run the following command:
+To use the `cobra` as an package, run the following command:
 
 ```sh
 pip install -e .

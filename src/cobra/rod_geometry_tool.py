@@ -3,7 +3,7 @@ from elastica._calculus import _difference, quadrature_kernel
 from elastica._linalg import _batch_cross
 from numba import njit
 
-from cobr2.math_tool import average2D as _average
+from cobra.math_tool import average2D as _average
 
 
 @njit(cache=True)  # type: ignore

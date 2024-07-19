@@ -10,7 +10,7 @@ import numpy as np
 from callbacks import RodCallBack
 from tqdm import tqdm
 
-from cobr2.actuations.FREE import ApplyFREEs, BaseFREE, PressureCoefficients
+from cobra.actuations.FREE import ApplyFREEs, BaseFREE, PressureCoefficients
 
 
 class BaseSimulator(

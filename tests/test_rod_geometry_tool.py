@@ -1,6 +1,6 @@
 import numpy as np
 
-from cobr2.rod_geometry_tool import sigma_to_shear
+from cobra.rod_geometry_tool import sigma_to_shear
 
 
 class TestRodGeometryTool:

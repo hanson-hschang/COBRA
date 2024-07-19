@@ -10,9 +10,9 @@ import os
 import sys
 
 sys.path.insert(0, os.path.abspath("../src"))
-from cobr2 import version
+from cobra import version
 
-project = "COBR2 - Control Oriented BR2 Actuation Model"
+project = "COBRA - Control Oriented Bending and Rotational Actuation Model"
 copyright = "2024, Heng-Sheng (Hanson) Chang"
 author = "Heng-Sheng (Hanson) Chang"
 release = version

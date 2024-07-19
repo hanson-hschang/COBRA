@@ -6,10 +6,10 @@ import elastica as ea
 import numpy as np
 from numba import njit
 
-from cobr2.actuations import ApplyActuations, ContinuousActuation
-from cobr2.actuations.actuation_tool import force_induced_couple
-from cobr2.math_tool import average2D, pointwise_multiplication
-from cobr2.rod_geometry_tool import (
+from cobra.actuations import ApplyActuations, ContinuousActuation
+from cobra.actuations.actuation_tool import force_induced_couple
+from cobra.math_tool import average2D, pointwise_multiplication
+from cobra.rod_geometry_tool import (
     compute_local_shear,
     compute_local_tangent,
     sigma_to_shear,
