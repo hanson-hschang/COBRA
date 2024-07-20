@@ -5,9 +5,11 @@ Created on Jun 01, 2024
 
 from abc import ABC, abstractmethod
 
+import bsr
 import elastica as ea
 import numpy as np
 from callbacks import RodCallBack
+from elastica_blender import BlenderRodCallback
 from tqdm import tqdm
 
 from cobra.actuations.FREE import ApplyFREEs, BaseFREE, PressureCoefficients
@@ -74,6 +76,10 @@ class BaseEnvironment(ABC):
 
 
 class BR2Environment(BaseEnvironment):
+    def __init__(self, *args, **kwargs) -> None:
+        bsr.clear_mesh_objects()
+        super().__init__(*args, **kwargs)
+
     def setup(
         self,
     ) -> None:
@@ -126,6 +132,12 @@ class BR2Environment(BaseEnvironment):
             callback_params=self.rod_callback_params,
         )
 
+        # Setup blender rod callback
+        self.simulator.collect_diagnostics(self.rod).using(
+            BlenderRodCallback,
+            step_skip=self.step_skip,
+        )
+
         # Setup boundary conditions
         self.simulator.constrain(self.rod).using(
             ea.OneEndFixedBC,
@@ -171,13 +183,26 @@ class BR2Environment(BaseEnvironment):
             ],
         )
 
-    def step(self, time: float, pressures: np.ndarray = np.zeros(3)):
+    def step(self, time: float, pressures: np.ndarray = np.zeros(3)) -> float:
         # Apply pressures to the BR2 arm
         self.bending_actuation.pressure = pressures[0]
         self.rotation_CW_actuation.pressure = pressures[1]
         self.rotation_CCW_actuation.pressure = pressures[2]
 
         return super().step(time)
+
+    def save(self, filename: str) -> None:
+        while filename.endswith(".npz") or filename.endswith(".blend"):
+            if filename.endswith(".npz"):
+                filename = filename[:-4]
+            if filename.endswith(".blend"):
+                filename = filename[:-6]
+
+        # Save as .npz file
+        np.savez(filename + ".npz", **self.rod_callback_params)
+
+        # Save as .blend file
+        bsr.save(filename + ".blend")
 
 
 def main(
@@ -196,6 +221,9 @@ def main(
     for step in tqdm(range(env.total_steps)):
         time = env.step(time)
     print("Simulation finished!")
+
+    # Save the simulation
+    env.save("BR2_simulation")
 
 
 if __name__ == "__main__":

@@ -1,3 +1,10 @@
+# data files
+*.npy
+*.npz
+
+# blender files
+*.blend
+
 # numba files
 *.nb[ci]
 
