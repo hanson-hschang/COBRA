@@ -97,7 +97,7 @@ class BR2Environment(BaseEnvironment):
         )  # bending FREE direction of the BR2 arm (x-axis pointing forward)
         n_elements = 100  # number of discretized elements of the BR2 arm
         rest_length = 0.16  # rest length of the BR2 arm
-        rest_radius = 0.0075  # rest radius of the BR2 arm
+        rest_radius = 0.015  # rest radius of the BR2 arm
         density = 700  # density of the BR2 arm
         youngs_modulus = 1e7  # Young's modulus of the BR2 arm
         poisson_ratio = 0.5  # Poisson's ratio of the BR2 arm
@@ -153,25 +153,67 @@ class BR2Environment(BaseEnvironment):
 
         # Setup the BR2 arm presure actuation model
         # TODO: set the right position and pressure coefficients for the BR2 actuations
+
+        offset_position_ratio = 2 / (2 + np.sqrt(3))
+
+        bending_actuation_direction = np.array([1.0, 0.0, 0.0])
+
+        rotation_CW_actuation_rotate_angle = 120 / 180 * np.pi
+        rotation_CW_actuation_direction = np.array(
+            [
+                np.cos(rotation_CW_actuation_rotate_angle),
+                np.sin(rotation_CW_actuation_rotate_angle),
+                0.0,
+            ]
+        )
+
+        rotation_CCW_actuation_rotate_angle = 240 / 180 * np.pi
+        rotation_CCW_actuation_direction = np.array(
+            [
+                np.cos(rotation_CCW_actuation_rotate_angle),
+                np.sin(rotation_CCW_actuation_rotate_angle),
+                0.0,
+            ]
+        )
+
+        bending_actuation_force_coefficients = np.array([10.0, 0.0])
+        rotation_CW_actuation_couple_coefficients = np.array([0.2, 0.0])
+        rotation_CCW_actuation_couple_coefficients = np.array([-0.2, 0.0])
+
         self.bending_actuation = BaseFREE(
-            position=np.zeros((3, n_elements)),
+            position=np.tile(
+                rest_radius
+                * offset_position_ratio
+                * bending_actuation_direction,
+                (n_elements, 1),
+            ).T,
             pressure_coefficients=PressureCoefficients(
-                force=np.array([0.0, 0.0, 0.0]),
+                force=bending_actuation_force_coefficients,
                 couple=np.array([0.0, 0.0, 0.0]),
             ),
         )
         self.rotation_CW_actuation = BaseFREE(
-            position=np.zeros((3, n_elements)),
+            position=np.tile(
+                rest_radius
+                * offset_position_ratio
+                * rotation_CW_actuation_direction,
+                (n_elements, 1),
+            ).T,
             pressure_coefficients=PressureCoefficients(
                 force=np.array([0.0, 0.0, 0.0]),
-                couple=np.array([0.0, 0.0, 0.0]),
+                couple=rotation_CW_actuation_couple_coefficients,
             ),
         )
         self.rotation_CCW_actuation = BaseFREE(
-            position=np.zeros((3, n_elements)),
+            position=np.tile(
+                rest_radius
+                * offset_position_ratio
+                * rotation_CCW_actuation_direction,
+                (n_elements, 1),
+            ).T,
             pressure_coefficients=PressureCoefficients(
                 force=np.array([0.0, 0.0, 0.0]),
-                couple=np.array([0.0, 0.0, 0.0]),
+                couple=rotation_CCW_actuation_couple_coefficients,
             ),
         )
         self.simulator.add_forcing_to(self.rod).using(
@@ -219,7 +261,7 @@ def main(
     print("Running simulation ...")
     time = np.float64(0.0)
     for step in tqdm(range(env.total_steps)):
-        time = env.step(time)
+        time = env.step(time=time, pressures=np.array([0, 40 * time, 0.0]))
     print("Simulation finished!")
 
     # Save the simulation

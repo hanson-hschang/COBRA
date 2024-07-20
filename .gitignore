@@ -4,6 +4,7 @@
 
 # blender files
 *.blend
+*.blend*
 
 # numba files
 *.nb[ci]
