@@ -8,8 +8,7 @@ from abc import ABC, abstractmethod
 import bsr
 import elastica as ea
 import numpy as np
-from callbacks import RodCallBack
-from elastica_blender import BlenderRodCallback
+from callbacks import BlenderBR2CallBack, BR2Property, RodCallBack
 from tqdm import tqdm
 
 from cobra.actuations.FREE import ApplyFREEs, BaseFREE, PressureCoefficients
@@ -132,12 +131,6 @@ class BR2Environment(BaseEnvironment):
             callback_params=self.rod_callback_params,
         )
 
-        # Setup blender rod callback
-        self.simulator.collect_diagnostics(self.rod).using(
-            BlenderRodCallback,
-            step_skip=self.step_skip,
-        )
-
         # Setup boundary conditions
         self.simulator.constrain(self.rod).using(
             ea.OneEndFixedBC,
@@ -153,6 +146,8 @@ class BR2Environment(BaseEnvironment):
 
         # Setup the BR2 arm presure actuation model
         # TODO: set the right position and pressure coefficients for the BR2 actuations
+
+        actuation_radius_ratio = np.sqrt(3) / (2 + np.sqrt(3))
 
         offset_position_ratio = 2 / (2 + np.sqrt(3))
 
@@ -176,41 +171,50 @@ class BR2Environment(BaseEnvironment):
             ]
         )
 
-        bending_actuation_force_coefficients = np.array([10.0, 0.0])
-        rotation_CW_actuation_couple_coefficients = np.array([0.2, 0.0])
-        rotation_CCW_actuation_couple_coefficients = np.array([-0.2, 0.0])
-
-        self.bending_actuation = BaseFREE(
-            position=np.tile(
+        br2_property = BR2Property(
+            radii=(
+                actuation_radius_ratio * rest_radius * np.ones(n_elements - 1)
+            ),
+            bending_actuation_position=np.tile(
                 rest_radius
                 * offset_position_ratio
                 * bending_actuation_direction,
                 (n_elements, 1),
             ).T,
+            rotation_CW_actuation_position=np.tile(
+                rest_radius
+                * offset_position_ratio
+                * rotation_CW_actuation_direction,
+                (n_elements, 1),
+            ).T,
+            rotation_CCW_actuation_position=np.tile(
+                rest_radius
+                * offset_position_ratio
+                * rotation_CCW_actuation_direction,
+                (n_elements, 1),
+            ).T,
+        )
+
+        bending_actuation_force_coefficients = np.array([-8.0, 0.0])
+        rotation_CW_actuation_couple_coefficients = np.array([0.2, 0.0])
+        rotation_CCW_actuation_couple_coefficients = np.array([-0.2, 0.0])
+
+        self.bending_actuation = BaseFREE(
+            position=br2_property.bending_actuation_position,
             pressure_coefficients=PressureCoefficients(
                 force=bending_actuation_force_coefficients,
                 couple=np.array([0.0, 0.0, 0.0]),
             ),
         )
         self.rotation_CW_actuation = BaseFREE(
-            position=np.tile(
-                rest_radius
-                * offset_position_ratio
-                * rotation_CW_actuation_direction,
-                (n_elements, 1),
-            ).T,
+            position=br2_property.rotation_CW_actuation_position,
             pressure_coefficients=PressureCoefficients(
                 force=np.array([0.0, 0.0, 0.0]),
                 couple=rotation_CW_actuation_couple_coefficients,
             ),
         )
         self.rotation_CCW_actuation = BaseFREE(
-            position=np.tile(
-                rest_radius
-                * offset_position_ratio
-                * rotation_CCW_actuation_direction,
-                (n_elements, 1),
-            ).T,
+            position=br2_property.rotation_CCW_actuation_position,
             pressure_coefficients=PressureCoefficients(
                 force=np.array([0.0, 0.0, 0.0]),
                 couple=rotation_CCW_actuation_couple_coefficients,
@@ -223,6 +227,14 @@ class BR2Environment(BaseEnvironment):
                 self.rotation_CW_actuation,
                 self.rotation_CCW_actuation,
             ],
+        )
+
+        # Setup blender rod callback
+        self.simulator.collect_diagnostics(self.rod).using(
+            BlenderBR2CallBack,
+            step_skip=self.step_skip,
+            property=br2_property,
+            system=self.rod,
         )
 
     def step(self, time: float, pressures: np.ndarray = np.zeros(3)) -> float:
@@ -248,7 +260,7 @@ class BR2Environment(BaseEnvironment):
 
 
 def main(
-    final_time: float = 1.0,
+    final_time: float = 5.0,
     time_step: float = 1.0e-5,
     recording_fps: int = 30,
 ):
@@ -261,7 +273,7 @@ def main(
     print("Running simulation ...")
     time = np.float64(0.0)
     for step in tqdm(range(env.total_steps)):
-        time = env.step(time=time, pressures=np.array([0, 40 * time, 0.0]))
+        time = env.step(time=time, pressures=np.array([0.0, 40 * time, 0.0]))
     print("Simulation finished!")
 
     # Save the simulation
