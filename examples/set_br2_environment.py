@@ -97,6 +97,7 @@ class BR2Environment(BaseEnvironment):
         n_elements = 100  # number of discretized elements of the BR2 arm
         rest_length = 0.16  # rest length of the BR2 arm
         rest_radius = 0.015  # rest radius of the BR2 arm
+        thickness = 0.002  # thickness of the BR2 arm
         density = 700  # density of the BR2 arm
         youngs_modulus = 1e7  # Young's modulus of the BR2 arm
         poisson_ratio = 0.5  # Poisson's ratio of the BR2 arm
@@ -114,6 +115,7 @@ class BR2Environment(BaseEnvironment):
             youngs_modulus=youngs_modulus,
             shear_modulus=youngs_modulus / (poisson_ratio + 1.0),
         )
+
         self.simulator.append(self.rod)
 
         # Setup viscous damping
@@ -273,7 +275,7 @@ def main(
     print("Running simulation ...")
     time = np.float64(0.0)
     for step in tqdm(range(env.total_steps)):
-        time = env.step(time=time, pressures=np.array([0.0, 40 * time, 0.0]))
+        time = env.step(time=time, pressures=np.array([40 * time, 0.0, 0.0]))
     print("Simulation finished!")
 
     # Save the simulation
