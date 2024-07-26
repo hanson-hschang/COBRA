@@ -116,6 +116,31 @@ class BR2Environment(BaseEnvironment):
             shear_modulus=youngs_modulus / (poisson_ratio + 1.0),
         )
 
+        # Adjust for the hollow rod
+        # offset_position_ratio = 2 / (2 + np.sqrt(3))
+        # rest_outer_radius = (1-offset_position_ratio) * rest_radius  # rest outer radius of a FREE
+        # rest_inner_radius = rest_outer_radius - thickness  # rest inner radius of a FREE
+
+        # cross_section_area = np.pi * (
+        #     rest_outer_radius ** 2 - rest_inner_radius ** 2
+        # )
+
+        # self.rod.mass_second_moment_of_inertia[2, 2, :] = 3 * (
+        #     np.pi*(offset_position_ratio*rest_radius)**2 +
+        #     np.pi*((rest_outer_radius)**4-(rest_inner_radius)**4)/64
+        # )
+        # for i in range(n_elements):
+        #     self.rod.inv_mass_second_moment_of_inertia[:, :, i] = np.linalg.inv(
+        #         self.rod.mass_second_moment_of_inertia[:, :, i]
+        #     )
+
+        # self.rod.shear_matrix = (
+        #     1-(rest_inner_radius/rest_outer_radius)**2
+        # ) * self.rod.shear_matrix
+        # self.rod.bend_matrix[2, 2, :]  = (
+        #     1-(rest_inner_radius/rest_outer_radius)**4
+        # ) * self.rod.bend_matrix[2, 2, :]
+
         self.simulator.append(self.rod)
 
         # Setup viscous damping
@@ -198,8 +223,8 @@ class BR2Environment(BaseEnvironment):
         )
 
         bending_actuation_force_coefficients = np.array([-8.0, 0.0])
-        rotation_CW_actuation_couple_coefficients = np.array([0.2, 0.0])
-        rotation_CCW_actuation_couple_coefficients = np.array([-0.2, 0.0])
+        rotation_CW_actuation_couple_coefficients = np.array([0.1, 0.0])
+        rotation_CCW_actuation_couple_coefficients = np.array([-0.1, 0.0])
 
         self.bending_actuation = BaseFREE(
             position=br2_property.bending_actuation_position,
@@ -275,7 +300,9 @@ def main(
     print("Running simulation ...")
     time = np.float64(0.0)
     for step in tqdm(range(env.total_steps)):
-        time = env.step(time=time, pressures=np.array([40 * time, 0.0, 0.0]))
+        time = env.step(
+            time=time, pressures=np.array([40 * time, 40 * time, 0.0])
+        )
     print("Simulation finished!")
 
     # Save the simulation
