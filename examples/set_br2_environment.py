@@ -319,7 +319,7 @@ def main(
     print("Simulation finished!")
 
     if BSR_AVAILABLE:
-        bsr.region_3d.view_distance = 1
+        bsr.set_view_distance(distance=0.5)
 
     # Save the simulation
     env.save("BR2_simulation")
