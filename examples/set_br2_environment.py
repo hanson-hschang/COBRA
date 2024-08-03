@@ -300,7 +300,7 @@ class BR2Environment(BaseEnvironment):
 
 
 def main(
-    final_time: float = 1.0,
+    final_time: float = 5.0,
     time_step: float = 1.0e-5,
     recording_fps: int = 30,
 ):
@@ -310,12 +310,6 @@ def main(
         time_step=time_step,
         recording_fps=recording_fps,
     )
-    if BSR_AVAILABLE:
-        # print(bpy.context.__dict__())
-        # quit()
-        bpy.ops.object.camera_add()
-        camera = bpy.context.active_object
-        camera.location = (-1, 1, 1)
 
     # Start the simulation
     print("Running simulation ...")
@@ -325,6 +319,9 @@ def main(
             time=time, pressures=np.array([40 * time, 40 * time, 0.0])
         )
     print("Simulation finished!")
+
+    if BSR_AVAILABLE:
+        bsr.region_3d.view_distance = 1
 
     # Save the simulation
     env.save("BR2_simulation")
