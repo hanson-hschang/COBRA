@@ -12,11 +12,9 @@ from tqdm import tqdm
 
 from cobra.actuations.FREE import ApplyFREEs, BaseFREE, PressureCoefficients
 
+BSR_AVAILABLE = True
 try:
-    import bpy
     import bsr
-
-    BSR_AVAILABLE = True
     from callbacks import BlenderBR2CallBack
 except ImportError:
     BSR_AVAILABLE = False

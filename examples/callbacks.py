@@ -11,10 +11,9 @@ from numba import njit
 
 from cobra.actuations.actuation_tool import material_to_lab
 
+BSR_AVAILABLE = True
 try:
     import bsr
-
-    BSR_AVAILABLE = True
 except ImportError:
     BSR_AVAILABLE = False
 
