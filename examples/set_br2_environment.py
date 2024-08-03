@@ -5,13 +5,21 @@ Created on Jun 01, 2024
 
 from abc import ABC, abstractmethod
 
-import bsr
 import elastica as ea
 import numpy as np
-from callbacks import BlenderBR2CallBack, BR2Property, RodCallBack
+from callbacks import BR2Property, RodCallBack
 from tqdm import tqdm
 
 from cobra.actuations.FREE import ApplyFREEs, BaseFREE, PressureCoefficients
+
+try:
+    import bpy
+    import bsr
+
+    BSR_AVAILABLE = True
+    from callbacks import BlenderBR2CallBack
+except ImportError:
+    BSR_AVAILABLE = False
 
 
 class BaseSimulator(
@@ -256,13 +264,14 @@ class BR2Environment(BaseEnvironment):
             ],
         )
 
-        # Setup blender rod callback
-        self.simulator.collect_diagnostics(self.rod).using(
-            BlenderBR2CallBack,
-            step_skip=self.step_skip,
-            property=br2_property,
-            system=self.rod,
-        )
+        if BSR_AVAILABLE:
+            # Setup blender rod callback
+            self.simulator.collect_diagnostics(self.rod).using(
+                BlenderBR2CallBack,
+                step_skip=self.step_skip,
+                property=br2_property,
+                system=self.rod,
+            )
 
     def step(self, time: float, pressures: np.ndarray = np.zeros(3)) -> float:
         # Apply pressures to the BR2 arm
@@ -282,19 +291,31 @@ class BR2Environment(BaseEnvironment):
         # Save as .npz file
         np.savez(filename + ".npz", **self.rod_callback_params)
 
-        # Save as .blend file
-        bsr.save(filename + ".blend")
+        if BSR_AVAILABLE:
+            # Set the final keyframe number
+            bsr.frame.set_frame_end()
+
+            # Save as .blend file
+            bsr.save(filename + ".blend")
 
 
 def main(
-    final_time: float = 5.0,
+    final_time: float = 1.0,
     time_step: float = 1.0e-5,
     recording_fps: int = 30,
 ):
     # Initialize the environment
     env = BR2Environment(
-        final_time=final_time, time_step=time_step, recording_fps=recording_fps
+        final_time=final_time,
+        time_step=time_step,
+        recording_fps=recording_fps,
     )
+    if BSR_AVAILABLE:
+        # print(bpy.context.__dict__())
+        # quit()
+        bpy.ops.object.camera_add()
+        camera = bpy.context.active_object
+        camera.location = (-1, 1, 1)
 
     # Start the simulation
     print("Running simulation ...")
