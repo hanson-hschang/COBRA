@@ -82,7 +82,8 @@ class BaseEnvironment(ABC):
 
 class BR2Environment(BaseEnvironment):
     def __init__(self, *args, **kwargs) -> None:
-        bsr.clear_mesh_objects()
+        if BSR_AVAILABLE:
+            bsr.clear_mesh_objects()
         super().__init__(*args, **kwargs)
 
     def setup(
