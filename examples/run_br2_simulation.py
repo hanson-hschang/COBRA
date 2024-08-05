@@ -30,9 +30,7 @@ def main(
     print("Running simulation ...")
     time = np.float64(0.0)
     for step in tqdm(range(env.total_steps)):
-        time = env.step(
-            time=time, pressures=np.array([40 * time, 40 * time, 0.0])
-        )
+        time = env.step(time=time, pressures=np.array([40 * time, 0.0, 0.0]))
     print("Simulation finished!")
 
     if BSR_AVAILABLE:

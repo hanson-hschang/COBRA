@@ -228,7 +228,7 @@ class BR2Environment(BaseEnvironment):
             ).T,
         )
 
-        bending_actuation_force_coefficients = np.array([-8.0, 0.0])
+        bending_actuation_force_coefficients = np.array([-5.0, 0.0])
         rotation_CW_actuation_couple_coefficients = np.array([0.1, 0.0])
         rotation_CCW_actuation_couple_coefficients = np.array([-0.1, 0.0])
 

@@ -40,7 +40,7 @@ class BaseFREE(ContinuousActuation):
         self,
         position: np.ndarray,
         pressure_coefficients: PressureCoefficients,
-        pressure_maximum: float = 40.0,
+        pressure_maximum: float = 30.0,
     ):
         """__init__ method for BaseFREE class.
 
