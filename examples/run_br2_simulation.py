@@ -14,6 +14,18 @@ except ImportError:
     BSR_AVAILABLE = False
 
 
+def pressure_profile(time):
+    if time < 1.25:
+        pressures = np.array([30 * time, 0.0, 0.0])
+    elif time < 2.5:
+        pressures = np.array([30.0, 30 * (time - 1.25), 0.0])
+    elif time < 3.75:
+        pressures = np.array([30.0 * (3.75 - time), 30.0, 0.0])
+    else:
+        pressures = np.array([0.0, 30.0 * (5.0 - time), 0.0])
+    return pressures
+
+
 def main(
     final_time: float = 5.0,
     time_step: float = 1.0e-5,
@@ -30,19 +42,13 @@ def main(
     print("Running simulation ...")
     time = np.float64(0.0)
     for step in tqdm(range(env.total_steps)):
+
+        pressures = pressure_profile(time)
+
         time = env.step(
-            time=time, pressures=np.array([30 * time, 30 * time, 0.0])
+            time=time,
+            pressures=pressures,
         )
-        if (step + 1) % 10000 == 0:
-            print(
-                f"Time: {time:.4f} s, angular strain along d1 = {env.rod.kappa[0, 50]:.4f}"
-            )
-            print(
-                f"Time: {time:.4f} s, angular strain along d2 = {env.rod.kappa[1, 50]:.4f}"
-            )
-            print(
-                f"Time: {time:.4f} s, twist strain = {env.rod.kappa[2, 50]:.4f}"
-            )
     print("Simulation finished!")
 
     if BSR_AVAILABLE:
