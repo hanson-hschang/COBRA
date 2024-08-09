@@ -30,7 +30,19 @@ def main(
     print("Running simulation ...")
     time = np.float64(0.0)
     for step in tqdm(range(env.total_steps)):
-        time = env.step(time=time, pressures=np.array([30 * time, 0.0, 0.0]))
+        time = env.step(
+            time=time, pressures=np.array([30 * time, 30 * time, 0.0])
+        )
+        if (step + 1) % 10000 == 0:
+            print(
+                f"Time: {time:.4f} s, angular strain along d1 = {env.rod.kappa[0, 50]:.4f}"
+            )
+            print(
+                f"Time: {time:.4f} s, angular strain along d2 = {env.rod.kappa[1, 50]:.4f}"
+            )
+            print(
+                f"Time: {time:.4f} s, twist strain = {env.rod.kappa[2, 50]:.4f}"
+            )
     print("Simulation finished!")
 
     if BSR_AVAILABLE:
