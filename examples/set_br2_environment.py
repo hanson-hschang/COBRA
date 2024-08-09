@@ -106,7 +106,7 @@ class BR2Environment(BaseEnvironment):
         rest_radius = 0.015  # rest radius of the BR2 arm
         thickness = 0.002  # thickness of the BR2 arm
         density = 700  # density of the BR2 arm
-        youngs_modulus = 1e7  # Young's modulus of the BR2 arm
+        youngs_modulus = 3 * 1e6  # Young's modulus of the BR2 arm
         poisson_ratio = 0.5  # Poisson's ratio of the BR2 arm
         damping_constant = 0.05  # damping constant of the BR2 arm
 
@@ -229,7 +229,7 @@ class BR2Environment(BaseEnvironment):
             ).T,
         )
 
-        bending_actuation_force_coefficients = np.array([-5.0, 0.0])
+        bending_actuation_force_coefficients = np.array([-2, 0.0])
         rotation_CW_actuation_couple_coefficients = np.array([0.1, 0.0])
         rotation_CCW_actuation_couple_coefficients = np.array([-0.1, 0.0])
 
