@@ -49,7 +49,7 @@ class Pressure:
     """
 
     def __set_name__(self, owner: type, name: str) -> None:
-        self.private_name = "_" + name
+        self.private_name = "__" + name
         setattr(owner, self.private_name, 0.0)
 
     def __get__(self, instance: object, owner: type) -> float:
