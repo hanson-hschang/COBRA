@@ -73,7 +73,7 @@ class BaseFREE(ContinuousActuation):
     pressure_coefficients : PressureCoefficients
         Dataclass containing pressure coefficients for force and couple.
     pressure_maximum : float, optional
-        Maximum pressure value with unit [psi], by default 40.0.
+        Maximum pressure value with unit [psi], by default 30.0.
     """
 
     pressure = Pressure()
