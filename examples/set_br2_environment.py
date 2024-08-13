@@ -10,6 +10,7 @@ from abc import ABC, abstractmethod
 import elastica as ea
 import numpy as np
 from callbacks import BR2Property, RodCallBack
+from packaging.version import Version
 from tqdm import tqdm
 
 from cobra.actuations.FREE import ApplyFREEs, BaseFREE, PressureCoefficients
@@ -18,6 +19,9 @@ BSR_AVAILABLE = True
 try:
     import bsr
     from callbacks import BlenderBR2CallBack
+
+    if Version(bsr.version) < Version("0.1.1"):
+        raise ImportError("BSR version should be at least 0.1.1")
 except ImportError:
     BSR_AVAILABLE = False
 
