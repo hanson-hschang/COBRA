@@ -4,12 +4,16 @@ Created on Aug 03, 2024
 """
 
 import numpy as np
+from packaging.version import Version
 from set_br2_environment import BR2Environment
 from tqdm import tqdm
 
 BSR_AVAILABLE = True
 try:
     import bsr
+
+    if Version(bsr.version) < Version("0.1.1"):
+        raise ImportError("BSR version should be at least 0.1.1")
 except ImportError:
     BSR_AVAILABLE = False
 
