@@ -1,4 +1,4 @@
-from typing import Iterable
+from typing import Iterable, Protocol
 
 from dataclasses import dataclass
 
@@ -35,37 +35,66 @@ class PressureCoefficients:
         return np.polyval(self.couple, pressure) * self.ones
 
 
+class RequiredMaxPressure(Protocol):
+    """
+    Protocol class for pressure_maximum attribute.
+    """
+
+    pressure_maximum: float
+
+
+class Pressure:
+    """
+    Descriptor class for pressure attribute.
+    """
+
+    def __set_name__(self, owner: type, name: str) -> None:
+        self.private_name = "_" + name
+        setattr(owner, self.private_name, 0.0)
+
+    def __get__(self, instance: object, owner: type) -> float:
+        value: float = getattr(instance, self.private_name)
+        return value
+
+    def __set__(self, instance: RequiredMaxPressure, value: float) -> None:
+        value = max(0.0, min(value, instance.pressure_maximum))
+        setattr(instance, self.private_name, value)
+
+
 class BaseFREE(ContinuousActuation):
+    """
+    Base class for FREE actuation.
+
+    Parameters
+    ----------
+    position : np.ndarray
+        2D (3, n_element) array array containing data with 'float' type.
+        Array containing material frame position vectors.
+    pressure_coefficients : PressureCoefficients
+        Dataclass containing pressure coefficients for force and couple.
+    pressure_maximum : float, optional
+        Maximum pressure value with unit [psi], by default 40.0.
+    """
+
+    pressure = Pressure()
+
     def __init__(
         self,
         position: np.ndarray,
         pressure_coefficients: PressureCoefficients,
         pressure_maximum: float = 30.0,
     ):
-        """__init__ method for BaseFREE class.
-
-        Parameters
-        ----------
-        position : np.ndarray
-            2D (3, n_element) array array containing data with 'float' type.
-            Array containing material frame position vectors.
-        pressure_coefficients : PressureCoefficients
-            Dataclass containing pressure coefficients for force and couple.
-        pressure_maximum : float, optional
-            Maximum pressure value with unit [psi], by default 40.0.
-        """
         super().__init__(n_elements=position.shape[1])
         self.position = position
         self.pressure_coefficients = pressure_coefficients
         self.pressure_coefficients.set_n_elements(self.n_elements)
         self.pressure_maximum = pressure_maximum
-        self.__pressure: float = 0.0
         self.tangent = np.zeros((3, self.n_elements))
         self.internal_force_value = self.pressure_coefficients.get_force_value(
-            self.__pressure
+            self.pressure
         )
         self.internal_couple_value = (
-            self.pressure_coefficients.get_couple_value(self.__pressure)
+            self.pressure_coefficients.get_couple_value(self.pressure)
         )
 
     def __call__(self, system: ea.CosseratRod) -> None:
@@ -80,10 +109,10 @@ class BaseFREE(ContinuousActuation):
             )
         )
         self.internal_force_value[:] = (
-            self.pressure_coefficients.get_force_value(self.__pressure)
+            self.pressure_coefficients.get_force_value(self.pressure)
         )
         self.internal_couple_value[:] = (
-            self.pressure_coefficients.get_couple_value(self.__pressure)
+            self.pressure_coefficients.get_couple_value(self.pressure)
         )
         self.compute_internal_load(
             self.position,
@@ -116,14 +145,6 @@ class BaseFREE(ContinuousActuation):
             position, internal_force
         )
         internal_couple[:, :] = average2D(temp_internal_couple)
-
-    @property
-    def pressure(self) -> float:
-        return self.__pressure
-
-    @pressure.setter
-    def pressure(self, pressure: float) -> None:
-        self.__pressure = max(0.0, min(pressure, self.pressure_maximum))
 
 
 class ApplyFREEs(ApplyActuations):
