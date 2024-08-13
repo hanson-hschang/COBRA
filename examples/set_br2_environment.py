@@ -328,7 +328,7 @@ class BR2Environment(BaseEnvironment):
 
         if BSR_AVAILABLE:
             # Set the final keyframe number
-            bsr.frame.set_frame_end()
+            bsr.frame_manager.set_frame_end()
 
             # Save as .blend file
             bsr.save(filename + ".blend")
