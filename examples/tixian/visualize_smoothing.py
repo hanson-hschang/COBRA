@@ -3,22 +3,23 @@ Created on Aug. 10, 2021
 @author: Heng-Sheng (Hanson) Chang
 """
 
+from types import SimpleNamespace as EmptyClass
+
 import os
 import pickle
 import tempfile
-from types import SimpleNamespace as EmptyClass
-
-import click
-import numpy as np
-from tqdm import tqdm
 
 import br2_vision
+import click
+import numpy as np
 from br2_vision.algorithms.frames.frame_data import DirectorFrame
 from br2_vision.algorithms.frames.frame_rod import RodFrame
 from br2_vision.data_structure.marker_positions import MarkerPositions
 from br2_vision.data_structure.posture_data import PostureData
 from br2_vision.utility.logging import config_logging
 from br2_vision_cli.run_smoothing import create_data_object
+from tqdm import tqdm
+
 
 def rotate_frame(orientation, position=None, director=None):
     if position is not None:
@@ -89,7 +90,9 @@ def create_movie(raw_data, file_path, delta_s_position, save_path):
             ax3d_flag=True,
         )
 
-        rest_lengths = np.linalg.norm(position[0][:, 1:] - position[0][:, :-1], axis=0)
+        rest_lengths = np.linalg.norm(
+            position[0][:, 1:] - position[0][:, :-1], axis=0
+        )
         frame.set_ref_configuration(
             position=rotate_frame(orientation, position=position[0]),
             shear=shear[0],
@@ -122,13 +125,17 @@ def create_movie(raw_data, file_path, delta_s_position, save_path):
                     ),
                 )
 
-            position_for_director = (position[k][:, 1:] + position[k][:, :-1]) / 2
+            position_for_director = (
+                position[k][:, 1:] + position[k][:, :-1]
+            ) / 2
 
             frame.plot_data(
                 position=rotate_frame(
                     orientation, position=position_for_director[:, ::-5]
                 ),
-                director=rotate_frame(orientation, director=director[k][:, :, ::-5]),
+                director=rotate_frame(
+                    orientation, director=director[k][:, :, ::-5]
+                ),
                 color="black",
             )
 
@@ -168,7 +175,9 @@ def main(tag, run_id, verbose):
     file_path = os.path.join(result_path, "smoothing.pkl")
     save_path = os.path.join(result_path, "smoothing.mov")
 
-    marker_positions = MarkerPositions.from_yaml(config["PATHS"]["marker_positions"])
+    marker_positions = MarkerPositions.from_yaml(
+        config["PATHS"]["marker_positions"]
+    )
     delta_s_position = np.array(marker_positions.marker_center_offset)
 
     # Create raw data
