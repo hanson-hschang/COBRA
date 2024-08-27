@@ -8,16 +8,12 @@ from dataclasses import dataclass
 import elastica as ea
 import numpy as np
 from numba import njit
-from packaging.version import Version
 
 from cobra.actuations.actuation_tool import material_to_lab
 
 BSR_AVAILABLE = True
 try:
     import bsr
-
-    if Version(bsr.version) < Version("0.1.1"):
-        raise ImportError("BSR version should be at least 0.1.1")
 except ImportError:
     BSR_AVAILABLE = False
 
@@ -190,5 +186,5 @@ if BSR_AVAILABLE:
                 centerline_position=system.position_collection,
                 centerline_director=system.director_collection,
             )
-            self.bsr_objs.set_keyframe(bsr.frame_manager.current_frame)
-            bsr.frame_manager.update()
+            self.bsr_objs.set_keyframe(bsr.frame.current_frame)
+            bsr.frame.update()

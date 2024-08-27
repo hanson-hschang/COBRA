@@ -3,14 +3,11 @@ Created on Jun 01, 2024
 @author: Heng-Sheng (Hanson) Chang
 """
 
-from typing import Self
-
 from abc import ABC, abstractmethod
 
 import elastica as ea
 import numpy as np
 from callbacks import BR2Property, RodCallBack
-from packaging.version import Version
 from tqdm import tqdm
 
 from cobra.actuations.FREE import ApplyFREEs, BaseFREE, PressureCoefficients
@@ -19,46 +16,8 @@ BSR_AVAILABLE = True
 try:
     import bsr
     from callbacks import BlenderBR2CallBack
-
-    if Version(bsr.version) < Version("0.1.1"):
-        raise ImportError("BSR version should be at least 0.1.1")
 except ImportError:
     BSR_AVAILABLE = False
-
-
-class Axis:
-    def __init__(self, vector: list[float] | np.ndarray):
-        if isinstance(vector, list):
-            vector = np.array(vector)
-        vector = vector / np.linalg.norm(vector)
-        self.__vector = vector
-
-    def rotate(self, angle: float, axis: np.ndarray | Self) -> Self:
-        """
-        Rotate itself around an axis by a given angle using Rodrigues' rotation formula.
-
-        Parameters:
-        angle (float): The angle of rotation in radians
-        axis (np.array): The unit vector representing the axis of rotation
-
-        Returns:
-        Axis: The rotated axis
-        """
-        if isinstance(axis, Axis):
-            axis = axis.to_numpy()
-        # Ensure the axis is a unit vector
-        axis = axis / np.linalg.norm(axis)
-
-        # Rodrigues' rotation formula
-        rotated_vector = (
-            self.__vector * np.cos(angle)
-            + np.cross(axis, self.__vector) * np.sin(angle)
-            + axis * np.dot(axis, self.__vector) * (1 - np.cos(angle))
-        )
-        return Axis(rotated_vector)
-
-    def to_numpy(self) -> np.ndarray:
-        return self.__vector
 
 
 class BaseSimulator(
@@ -135,22 +94,19 @@ class BR2Environment(BaseEnvironment):
     def setup_BR2(
         self,
     ) -> None:
-
         # BR2 arm parameters
-        bending_actuation_direction: Axis = Axis([-1.0, 0.0, 0.0])
-
-        direction: Axis = Axis(
+        direction = np.array(
             [0.0, 0.0, -1.0]
         )  # direction of the BR2 arm (z-axis pointing down)
-        normal: Axis = Axis(
-            -bending_actuation_direction.to_numpy()
-        )  # negative of bending FREE direction of the BR2 arm
+        normal = np.array(
+            [1.0, 0.0, 0.0]
+        )  # bending FREE direction of the BR2 arm (x-axis pointing forward)
         n_elements = 100  # number of discretized elements of the BR2 arm
-        rest_length = 0.18 # 0.16 # rest length of the BR2 arm
+        rest_length = 0.16  # rest length of the BR2 arm
         rest_radius = 0.015  # rest radius of the BR2 arm
         thickness = 0.002  # thickness of the BR2 arm
         density = 700  # density of the BR2 arm
-        youngs_modulus = 3 * 1e6  # Young's modulus of the BR2 arm
+        youngs_modulus = 1e7  # Young's modulus of the BR2 arm
         poisson_ratio = 0.5  # Poisson's ratio of the BR2 arm
         damping_constant = 0.05  # damping constant of the BR2 arm
 
@@ -158,8 +114,8 @@ class BR2Environment(BaseEnvironment):
         self.rod = ea.CosseratRod.straight_rod(
             n_elements=n_elements,
             start=np.zeros((3,)),
-            direction=direction.to_numpy(),
-            normal=normal.to_numpy(),
+            direction=direction,
+            normal=normal,
             base_length=rest_length,
             base_radius=rest_radius * np.ones(n_elements),
             density=density,
@@ -229,16 +185,24 @@ class BR2Environment(BaseEnvironment):
 
         offset_position_ratio = 2 / (2 + np.sqrt(3))
 
+        bending_actuation_direction = np.array([1.0, 0.0, 0.0])
+
         rotation_CW_actuation_rotate_angle = 120 / 180 * np.pi
-        rotation_CW_actuation_direction = bending_actuation_direction.rotate(
-            angle=rotation_CW_actuation_rotate_angle,
-            axis=direction,
+        rotation_CW_actuation_direction = np.array(
+            [
+                np.cos(rotation_CW_actuation_rotate_angle),
+                np.sin(rotation_CW_actuation_rotate_angle),
+                0.0,
+            ]
         )
 
-        rotation_CCW_actuation_rotate_angle = -120 / 180 * np.pi
-        rotation_CCW_actuation_direction = bending_actuation_direction.rotate(
-            angle=rotation_CCW_actuation_rotate_angle,
-            axis=direction,
+        rotation_CCW_actuation_rotate_angle = 240 / 180 * np.pi
+        rotation_CCW_actuation_direction = np.array(
+            [
+                np.cos(rotation_CCW_actuation_rotate_angle),
+                np.sin(rotation_CCW_actuation_rotate_angle),
+                0.0,
+            ]
         )
 
         br2_property = BR2Property(
@@ -248,26 +212,26 @@ class BR2Environment(BaseEnvironment):
             bending_actuation_position=np.tile(
                 rest_radius
                 * offset_position_ratio
-                * bending_actuation_direction.to_numpy(),
+                * bending_actuation_direction,
                 (n_elements, 1),
             ).T,
             rotation_CW_actuation_position=np.tile(
                 rest_radius
                 * offset_position_ratio
-                * rotation_CW_actuation_direction.to_numpy(),
+                * rotation_CW_actuation_direction,
                 (n_elements, 1),
             ).T,
             rotation_CCW_actuation_position=np.tile(
                 rest_radius
                 * offset_position_ratio
-                * rotation_CCW_actuation_direction.to_numpy(),
+                * rotation_CCW_actuation_direction,
                 (n_elements, 1),
             ).T,
         )
 
-        bending_actuation_force_coefficients = np.array([-2, 0.0])
-        rotation_CW_actuation_couple_coefficients = np.array([-0.1, 0.0])
-        rotation_CCW_actuation_couple_coefficients = np.array([0.1, 0.0])
+        bending_actuation_force_coefficients = np.array([-5.0, 0.0])
+        rotation_CW_actuation_couple_coefficients = np.array([0.1, 0.0])
+        rotation_CCW_actuation_couple_coefficients = np.array([-0.1, 0.0])
 
         self.bending_actuation = BaseFREE(
             position=br2_property.bending_actuation_position,
@@ -328,7 +292,7 @@ class BR2Environment(BaseEnvironment):
 
         if BSR_AVAILABLE:
             # Set the final keyframe number
-            bsr.frame_manager.set_frame_end()
+            bsr.frame.set_frame_end()
 
             # Save as .blend file
             bsr.save(filename + ".blend")
