@@ -19,19 +19,20 @@ except ImportError:
 
 
 def pressure_profile(time):
-    if time < 1.25:
-        pressures = np.array([30 * time, 0.0, 0.0])
-    elif time < 2.5:
-        pressures = np.array([30.0, 30 * (time - 1.25), 0.0])
-    elif time < 3.75:
-        pressures = np.array([30.0 * (3.75 - time), 30.0, 0.0])
+    period = 15 / 4
+    if time < period:
+        pressures = np.array([30 * time / period, 0.0, 0.0])
+    elif time < 2 * period:
+        pressures = np.array([30.0, 30 * (time - period) / period, 0.0])
+    elif time < 3 * period:
+        pressures = np.array([30.0 * (3 * period - time) / period, 30.0, 0.0])
     else:
-        pressures = np.array([0.0, 30.0 * (5.0 - time), 0.0])
+        pressures = np.array([0.0, 30.0 * (4 * period - time) / period, 0.0])
     return pressures
 
 
 def main(
-    final_time: float = 5.0,
+    final_time: float = 15.0,
     time_step: float = 1.0e-5,
     recording_fps: int = 30,
 ):
@@ -56,7 +57,17 @@ def main(
     print("Simulation finished!")
 
     if BSR_AVAILABLE:
+        # Set the frame rate
+        bsr.frame_manager.set_frame_rate(fps=recording_fps)
+
+        # Set the view distance
         bsr.set_view_distance(distance=0.5)
+
+        # Deslect all objects
+        bsr.deselect_all()
+
+        # Select the camera object
+        bsr.select_camera()
 
     # Save the simulation
     env.save("BR2_simulation")
