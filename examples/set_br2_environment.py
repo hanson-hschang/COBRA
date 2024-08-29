@@ -154,6 +154,18 @@ class BR2Environment(BaseEnvironment):
         poisson_ratio = 0.5  # Poisson's ratio of the BR2 arm
         damping_constant = 0.05  # damping constant of the BR2 arm
 
+        # Adjust for the hollow rod
+        FREE_radius_ratio = np.sqrt(3) / (2 + np.sqrt(3))
+        FREE_outer_radius = FREE_radius_ratio * rest_radius
+        FREE_inner_radius = FREE_outer_radius - thickness
+
+        FREE_cross_section_area = np.pi * (
+            FREE_outer_radius**2 - FREE_inner_radius**2
+        )
+        equivalent_ratio = np.sqrt(
+            FREE_cross_section_area / (np.pi * rest_radius**2)
+        )
+
         # Setup a rod
         self.rod = ea.CosseratRod.straight_rod(
             n_elements=n_elements,
@@ -161,36 +173,14 @@ class BR2Environment(BaseEnvironment):
             direction=direction.to_numpy(),
             normal=normal.to_numpy(),
             base_length=rest_length,
-            base_radius=rest_radius * np.ones(n_elements),
+            base_radius=equivalent_ratio * rest_radius * np.ones(n_elements),
             density=density,
             youngs_modulus=youngs_modulus,
             shear_modulus=youngs_modulus / (poisson_ratio + 1.0),
         )
 
-        # Adjust for the hollow rod
-        # offset_position_ratio = 2 / (2 + np.sqrt(3))
-        # rest_outer_radius = (1-offset_position_ratio) * rest_radius  # rest outer radius of a FREE
-        # rest_inner_radius = rest_outer_radius - thickness  # rest inner radius of a FREE
-
-        # cross_section_area = np.pi * (
-        #     rest_outer_radius ** 2 - rest_inner_radius ** 2
-        # )
-
-        # self.rod.mass_second_moment_of_inertia[2, 2, :] = 3 * (
-        #     np.pi*(offset_position_ratio*rest_radius)**2 +
-        #     np.pi*((rest_outer_radius)**4-(rest_inner_radius)**4)/64
-        # )
-        # for i in range(n_elements):
-        #     self.rod.inv_mass_second_moment_of_inertia[:, :, i] = np.linalg.inv(
-        #         self.rod.mass_second_moment_of_inertia[:, :, i]
-        #     )
-
-        # self.rod.shear_matrix = (
-        #     1-(rest_inner_radius/rest_outer_radius)**2
-        # ) * self.rod.shear_matrix
-        # self.rod.bend_matrix[2, 2, :]  = (
-        #     1-(rest_inner_radius/rest_outer_radius)**4
-        # ) * self.rod.bend_matrix[2, 2, :]
+        # Adjust for the inextensibility and unshearability
+        # self.rod.shear_matrix = 100 * self.rod.shear_matrix
 
         self.simulator.append(self.rod)
 
@@ -223,10 +213,6 @@ class BR2Environment(BaseEnvironment):
         )
 
         # Setup the BR2 arm presure actuation model
-        # TODO: set the right position and pressure coefficients for the BR2 actuations
-
-        actuation_radius_ratio = np.sqrt(3) / (2 + np.sqrt(3))
-
         offset_position_ratio = 2 / (2 + np.sqrt(3))
 
         rotation_CW_actuation_rotate_angle = 120 / 180 * np.pi
@@ -242,9 +228,7 @@ class BR2Environment(BaseEnvironment):
         )
 
         br2_property = BR2Property(
-            radii=(
-                actuation_radius_ratio * rest_radius * np.ones(n_elements - 1)
-            ),
+            radii=(FREE_radius_ratio * rest_radius * np.ones(n_elements - 1)),
             bending_actuation_position=np.tile(
                 rest_radius
                 * offset_position_ratio
@@ -265,9 +249,9 @@ class BR2Environment(BaseEnvironment):
             ).T,
         )
 
-        bending_actuation_force_coefficients = np.array([-2, 0.0])
-        rotation_CW_actuation_couple_coefficients = np.array([-0.1, 0.0])
-        rotation_CCW_actuation_couple_coefficients = np.array([0.1, 0.0])
+        bending_actuation_force_coefficients = np.array([-0.1, 0.0])
+        rotation_CW_actuation_couple_coefficients = np.array([0.0005, 0.0])
+        rotation_CCW_actuation_couple_coefficients = np.array([-0.0005, 0.0])
 
         self.bending_actuation = BaseFREE(
             position=br2_property.bending_actuation_position,
@@ -356,7 +340,17 @@ def main(
     print("Simulation finished!")
 
     if BSR_AVAILABLE:
+        # Set the frame rate
+        bsr.frame_manager.set_frame_rate(fps=recording_fps)
+
+        # Set the view distance
         bsr.set_view_distance(distance=0.5)
+
+        # Deslect all objects
+        bsr.deselect_all()
+
+        # Select the camera object
+        bsr.select_camera()
 
     # Save the simulation
     env.save("BR2_simulation")
