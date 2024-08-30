@@ -8,9 +8,10 @@ from cobra.math_tool import average2D as _average
 
 # @njit(cache=True)
 def pos_dir_to_input(pos: np.ndarray, dir: np.ndarray) -> np.ndarray:
-    input_orien : np.ndarray = dir.reshape(len(dir), -1, dir.shape[-1])
-    inputs : np.ndarray = np.hstack([pos, input_orien])
+    input_orien: np.ndarray = dir.reshape(len(dir), -1, dir.shape[-1])
+    inputs: np.ndarray = np.hstack([pos, input_orien])
     return inputs
+
 
 @njit(cache=True)  # type: ignore
 def average2D(vector: np.ndarray) -> np.ndarray:
@@ -24,6 +25,7 @@ def pointwise_multiplication(
 ) -> np.ndarray:
     result: np.ndarray = vector_a * vector_b
     return result
+
 
 @njit(cache=True)  # type: ignore
 def sigma_to_shear(sigma: np.ndarray) -> np.ndarray:
@@ -57,6 +59,7 @@ def compute_local_tangent(local_shear: np.ndarray) -> np.ndarray:
             + (local_shear[2, i]) ** 2
         )
     return local_tangent
+
 
 @njit(cache=True)
 def forward_path(dl, shear, kappa, position_collection, director_collection):
