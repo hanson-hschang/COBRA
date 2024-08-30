@@ -5,9 +5,9 @@ from utils import forward_path, sigma_to_shear
 
 color = ["C" + str(i) for i in range(10)]
 
-folder = "Data/arm_data/"
-idx = 0
-file_name = "BR2_simulation%03d" % (idx)  # 'BR2_simulation' #
+folder = "Data/"
+idx = 11
+file_name = "BR2_simulation%02d" % (idx)  # 'BR2_simulation' #
 data = np.load(folder + file_name + ".npz")
 
 # print(data.files)
@@ -21,9 +21,8 @@ L = np.linalg.norm(position[0, :, -1])
 s = np.linspace(0, L, n_elem + 1)
 s_mean = 0.5 * (s[1:] + s[:-1])
 # print(t.shape, position.shape, orientation.shape, kappa.shape, sigma.shape)
-print("\n", orientation[-1, ..., 0], "\n", orientation[-1, ..., -1])
-print(position[-1, ..., -1])
-# quit()
+# print('\n', orientation[-1,...,0], '\n', orientation[-1,...,-1])
+# print(position[-1,...,-1])
 
 dl = np.linalg.norm(position[0, :, 1:] - position[0, :, :-1], axis=0)
 pos_estimate = np.zeros_like(position)

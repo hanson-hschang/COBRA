@@ -53,14 +53,21 @@ def main(
             time=time,
             pressures=np.array(
                 [bending, CWtwisting, 0.0]
-            ),  # [30*time, 30*time, 0.0] #
+            ),  # [bending, 0.0, CWtwisting]
         )
-        if (step + 1) % 10000 == 0:
-            print(np.linalg.norm(env.rod.velocity_collection))
+        # if (step+1) % 10000 == 0:
+        #     print(np.linalg.norm(env.rod.velocity_collection))
     print("Simulation finished!")
 
     # Save the simulation
-    env.save("Data/arm_data/BR2_simulation%03d" % idx)
+    import os
+
+    folder_name = "dataset/Data"
+    if not os.path.exists(folder_name):
+        os.mkdir(folder_name)
+
+    print("saving data...")
+    env.save(folder_name + "/BR2_simulation%02d" % (idx))  # +11
 
 
 if __name__ == "__main__":
