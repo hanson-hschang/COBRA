@@ -1,6 +1,7 @@
 # data files
 *.npy
 *.npz
+examples/**/Data
 
 # blender files
 *.blend
