@@ -5,7 +5,7 @@ from utils import forward_path, sigma_to_shear
 color = ['C'+str(i) for i in range(10)]
 
 folder = 'Data/'
-idx = 11
+idx = 10
 file_name = 'BR2_simulation%02d' % (idx) # 'BR2_simulation' # 
 data = np.load(folder + file_name + '.npz')
 

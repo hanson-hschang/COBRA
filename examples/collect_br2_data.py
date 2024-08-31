@@ -46,7 +46,7 @@ def main(
         bending = min(bend * time, bend)
         CWtwisting = min(CWtwist * time, CWtwist)
         time = env.step(
-            time=time, pressures=np.array([bending, CWtwisting, 0.0]) # [bending, 0.0, CWtwisting]
+            time=time, pressures=np.array([bending, 0.0, CWtwisting]) # [bending, CWtwisting, 0.0]
         )
         # if (step+1) % 10000 == 0:
         #     print(np.linalg.norm(env.rod.velocity_collection))
@@ -60,7 +60,7 @@ def main(
         os.mkdir(folder_name)
 
     print("saving data...")
-    env.save(folder_name+"/BR2_simulation%02d" % (idx)) # +11
+    env.save(folder_name+"/BR2_simulation%02d" % (idx+11)) # 
 
 
 if __name__ == "__main__":
