@@ -14,11 +14,11 @@ color = ["C" + str(i) for i in range(10)]
 folder_name = "Data/"
 
 ## simulation data
-n_cases = 22
-step_skip = 1
+n_cases = 46
+step_skip = 2
 
 ## data point setup
-n_data_pts = 2  # exlude the initial point at base
+n_data_pts = 3  # exlude the initial point at base
 idx_data_pts = np.array(
     [int(100 / (n_data_pts)) * i for i in range(1, n_data_pts)] + [-1]
 )
@@ -120,9 +120,9 @@ model_data = {
 
 data = {
     "model": model_data,
-    "n_data_pts": n_data_pts,
-    "idx_data_pts": idx_data_pts,
-    "input_data": input_data,
+    # "n_data_pts": n_data_pts,
+    # "idx_data_pts": idx_data_pts,
+    # "input_data": input_data,
     "true_pos": true_pos,
     "true_dir": true_dir,
     "true_kappa": true_kappa,

@@ -16,7 +16,7 @@ except ImportError:
 
 def main(
     idx,
-    final_time: float = 3.0,
+    final_time: float = 4.0,
     time_step: float = 1.0e-5,
     recording_fps: int = 30,
 ):
@@ -29,21 +29,31 @@ def main(
     bend_max = 30
     twist_max = 25
     factor = 5
-    bends = np.arange(0, bend_max+factor, factor)
-    twists = np.arange(0, twist_max+factor, factor)
+    bends = np.arange(0, bend_max+factor, factor)[1:]
+    twists = np.arange(0, twist_max+factor, factor)[1:]
     bend_twist_pair = np.hstack([
         np.vstack([np.ones(len(twists))*bend_max, twists]),
         np.vstack([bends, np.ones(len(bends))*twist_max])
-    ])[:,:-1]
+    ])[:,:]
     bend = bend_twist_pair[0, idx]
     CWtwist = bend_twist_pair[1, idx]
     print('bend:', bend, 'twist:', CWtwist)
+
+    middle_step_time = 2.
     # Start the simulation
     print("Running simulation ...")
     time = np.float64(0.0)
     for step in tqdm(range(env.total_steps)):
-        bending = min(bend * time, bend)
-        CWtwisting = min(CWtwist * time, CWtwist)
+        if idx < int(bend_twist_pair.shape[-1]/2):
+            CWtwisting = min(CWtwist * time, CWtwist)
+            bending = 0
+            if time > middle_step_time:
+                bending = min(bend * (time - middle_step_time), bend)
+        else:
+            bending = min(bend * time, bend)
+            CWtwisting = 0
+            if time > middle_step_time:
+                CWtwisting = min(CWtwist * (time - middle_step_time), CWtwist)
         time = env.step(
             time=time, pressures=np.array([bending, CWtwisting, 0.0]) # [bending, 0.0, CWtwisting]
         )
@@ -59,7 +69,7 @@ def main(
         os.mkdir(folder_name)
 
     print("saving data...")
-    env.save(folder_name+"/BR2_simulation%02d" % (idx)) # + bend_twist_pair.shape[1]
+    env.save(folder_name+"/BR2_simulation%02d" % (idx+24)) # + bend_twist_pair.shape[1]
 
 
 if __name__ == "__main__":
