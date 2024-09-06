@@ -2,7 +2,9 @@
 Created on Jun 01, 2024
 @author: Heng-Sheng (Hanson) Chang
 """
+
 import sys
+
 import numpy as np
 from set_br2_environment import BR2Environment
 from tqdm import tqdm
@@ -45,7 +47,10 @@ def main(
         bending = min(bend * time, bend)
         CWtwisting = min(CWtwist * time, CWtwist)
         time = env.step(
-            time=time, pressures=np.array([bending, CWtwisting, 0.0]) # [bending, 0.0, CWtwisting]
+            time=time,
+            pressures=np.array(
+                [bending, 0.0, CWtwisting]
+            ),  # [bending, CWtwisting, 0.0]
         )
         # if (step+1) % 10000 == 0:
         #     print(np.linalg.norm(env.rod.velocity_collection))
