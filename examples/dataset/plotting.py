@@ -34,6 +34,7 @@ for i in range(len(t)):
 
 plotting_flag = False
 video_flag = True
+video_save_flag = False
 
 if plotting_flag:
 	fig1 = plt.figure(1)
@@ -99,8 +100,10 @@ if video_flag:
 			ax.set_ylim(0, L)
 			ax.set_zlim(-L,0)
 			ax.set_aspect("equal")
-			plt.pause(0.01)
-			writer.grab_frame()
+			if not video_save_flag:
+				plt.pause(0.01)
+			else:
+				writer.grab_frame()
 
 
 plt.show()
