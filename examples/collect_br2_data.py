@@ -31,15 +31,17 @@ def main(
     bend_max = 30
     twist_max = 25
     factor = 5
-    bends = np.arange(0, bend_max+factor, factor)
-    twists = np.arange(0, twist_max+factor, factor)
-    bend_twist_pair = np.hstack([
-        np.vstack([np.ones(len(twists))*bend_max, twists]),
-        np.vstack([bends, np.ones(len(bends))*twist_max])
-    ])[:,:-1]
+    bends = np.arange(0, bend_max + factor, factor)
+    twists = np.arange(0, twist_max + factor, factor)
+    bend_twist_pair = np.hstack(
+        [
+            np.vstack([np.ones(len(twists)) * bend_max, twists]),
+            np.vstack([bends, np.ones(len(bends)) * twist_max]),
+        ]
+    )[:, :-1]
     bend = bend_twist_pair[0, idx]
     CWtwist = bend_twist_pair[1, idx]
-    print('bend:', bend, 'twist:', CWtwist)
+    print("bend:", bend, "twist:", CWtwist)
     # Start the simulation
     print("Running simulation ...")
     time = np.float64(0.0)
@@ -64,7 +66,9 @@ def main(
         os.mkdir(folder_name)
 
     print("saving data...")
-    env.save(folder_name+"/BR2_simulation%02d" % (idx)) # + bend_twist_pair.shape[1]
+    env.save(
+        folder_name + "/BR2_simulation%02d" % (idx)
+    )  # + bend_twist_pair.shape[1]
 
 
 if __name__ == "__main__":
