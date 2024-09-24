@@ -146,7 +146,7 @@ class BR2Environment(BaseEnvironment):
             -bending_actuation_direction.to_numpy()
         )  # negative of bending FREE direction of the BR2 arm
         n_elements = 100  # number of discretized elements of the BR2 arm
-        rest_length = 0.18  # rest length of the BR2 arm (used to be 0.16)
+        rest_length = 0.288  # rest length of the BR2 arm (used to be 0.16)
         rest_radius = 0.015  # rest radius of the BR2 arm
         thickness = 0.002  # thickness of the BR2 arm
         density = 700  # density of the BR2 arm
@@ -249,9 +249,13 @@ class BR2Environment(BaseEnvironment):
             ).T,
         )
 
-        bending_actuation_force_coefficients = np.array([-0.1, 0.0])
-        rotation_CW_actuation_couple_coefficients = np.array([0.0008, 0.0])
-        rotation_CCW_actuation_couple_coefficients = np.array([-0.0008, 0.0])
+        # bending_actuation_force_coefficients = np.array([-0.1, 0.0])
+        # rotation_CW_actuation_couple_coefficients = np.array([0.0008, 0.0])
+        # rotation_CCW_actuation_couple_coefficients = np.array([-0.0008, 0.0])
+
+        bending_actuation_force_coefficients = np.array([-0.08, 0.0])
+        rotation_CW_actuation_couple_coefficients = np.array([0.0016, 0.0])
+        rotation_CCW_actuation_couple_coefficients = np.array([-0.0016, 0.0])
 
         self.bending_actuation = BaseFREE(
             position=br2_property.bending_actuation_position,

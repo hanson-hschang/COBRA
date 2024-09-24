@@ -19,22 +19,30 @@ except ImportError:
 
 
 def pressure_profile(time):
-    period = 15 / 4
-    if time < period:
-        pressures = np.array([30 * time / period, 0.0, 0.0])
-    elif time < 2 * period:
-        pressures = np.array([30.0, 30 * (time - period) / period, 0.0])
-    elif time < 3 * period:
-        pressures = np.array([30.0 * (3 * period - time) / period, 30.0, 0.0])
+    period = [2.2, 3.75, 3.75, 3.75]
+    if time < period[0]:
+        pressures = np.array([30 * time / period[0], 0.0, 0.0])
+    elif time < np.sum(period[:2]):
+        pressures = np.array([30.0, 30 * (time - period[0]) / period[1], 0.0])
+    elif time < np.sum(period[:3]):
+        pressures = np.array(
+            [
+                30.0 * (period[0] + period[1] + period[2] - time) / period[2],
+                30.0,
+                0.0,
+            ]
+        )
     else:
-        pressures = np.array([0.0, 30.0 * (4 * period - time) / period, 0.0])
+        pressures = np.array(
+            [0.0, 30.0 * (np.sum(period) - time) / period[3], 0.0]
+        )
     return pressures
 
 
 def main(
     final_time: float = 15.0,
     time_step: float = 1.0e-5,
-    recording_fps: int = 30,
+    recording_fps: int = 60,
 ):
     # Initialize the environment
     env = BR2Environment(
