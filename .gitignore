@@ -2,6 +2,7 @@
 *.npy
 *.npz
 examples/**/Data
+examples/**/Videos
 
 # blender files
 *.blend

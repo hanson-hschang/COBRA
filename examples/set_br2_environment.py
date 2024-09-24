@@ -135,7 +135,6 @@ class BR2Environment(BaseEnvironment):
     def setup_BR2(
         self,
     ) -> None:
-
         # BR2 arm parameters
         bending_actuation_direction: Axis = Axis([-1.0, 0.0, 0.0])
 
