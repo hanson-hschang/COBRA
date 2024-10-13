@@ -138,8 +138,8 @@ class BaseFREE(ContinuousActuation):
         temp_internal_couple = np.zeros((3, blocksize))
         for i in range(blocksize):
             internal_force[:, i] = internal_force_value[i] * tangent[:, i]
-            temp_internal_couple[:, i] = (
-                internal_couple_value[i] * tangent[:, i]
+            temp_internal_couple[2, i] = (
+                internal_couple_value[i] * tangent[2, i]
             )
         temp_internal_couple[:, :] += force_induced_couple(
             position, internal_force
