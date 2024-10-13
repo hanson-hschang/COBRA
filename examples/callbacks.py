@@ -166,6 +166,11 @@ if BSR_AVAILABLE:
                 radii=self.radii,
             )
 
+        def update_material(self, **kwargs) -> None:
+            self.bending_actuation.update_material(**kwargs)
+            self.rotation_CW_actuation.update_material(**kwargs)
+            self.rotation_CCW_actuation.update_material(**kwargs)
+
         def set_keyframe(self, keyframe: int) -> None:
             self.bending_actuation.set_keyframe(keyframe)
             self.rotation_CW_actuation.set_keyframe(keyframe)
@@ -184,6 +189,8 @@ if BSR_AVAILABLE:
                 default_centerline_position=system.position_collection,
                 default_centerline_director=system.director_collection,
             )
+            COLOR_BR2 = np.array([255, 238, 0, 255], dtype=np.float64) / 255.0
+            self.bsr_objs.update_material(color=COLOR_BR2)
 
         def save_params(self, system: ea.CosseratRod, time: float) -> None:
             self.bsr_objs.update_states(
