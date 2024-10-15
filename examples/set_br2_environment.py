@@ -250,13 +250,13 @@ class BR2Environment(BaseEnvironment):
             ).T,
         )
 
-        # bending_actuation_force_coefficients = np.array([-0.1, 0.0])
-        # rotation_CW_actuation_couple_coefficients = np.array([0.0008, 0.0])
-        # rotation_CCW_actuation_couple_coefficients = np.array([-0.0008, 0.0])
+        # bending_actuation_force_coefficients = np.array([-0.08, 0.0])
+        # rotation_CW_actuation_couple_coefficients = np.array([0.0016, 0.0])
+        # rotation_CCW_actuation_couple_coefficients = np.array([-0.0016, 0.0])
 
         bending_actuation_force_coefficients = np.array([-0.08, 0.0])
-        rotation_CW_actuation_couple_coefficients = np.array([0.0016, 0.0])
-        rotation_CCW_actuation_couple_coefficients = np.array([-0.0016, 0.0])
+        rotation_CW_actuation_couple_coefficients = np.array([0.0006, 0.0])
+        rotation_CCW_actuation_couple_coefficients = np.array([-0.0006, 0.0])
 
         self.bending_actuation = BaseFREE(
             position=br2_property.bending_actuation_position,
@@ -336,7 +336,7 @@ def main(
     )
 
     if BSR_AVAILABLE:
-        camera_direction_angle = -45 / 180 * np.pi
+        camera_direction_angle = -60 / 180 * np.pi
         camera_distance = 0.9
         camera_height = 0.5
         camera_direction = np.array(
@@ -381,9 +381,9 @@ def main(
             time=time,
             pressures=np.array(
                 [
+                    30 * time / 1.5,
                     0.0,
                     0.0,
-                    30 * time,
                 ]
             ),
         )
